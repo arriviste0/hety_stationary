@@ -1,0 +1,86 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-slate-900 antialiased;
+}
+
+.section-padding {
+  @apply px-4 sm:px-6 lg:px-10;
+}
+
+.hero-panel {
+  background: #ffffff;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.btn-primary {
+  @apply rounded-full border border-transparent bg-brand-600 text-white shadow-soft transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-accent-pink hover:bg-accent-pink hover:shadow-card active:translate-y-0 active:shadow-soft;
+}
+
+.btn-secondary {
+  @apply rounded-full border border-brand-600 bg-white text-brand-600 transition-all duration-200 ease-out hover:border-accent-pink hover:bg-accent-pink hover:text-white;
+}
+
+.icon-btn {
+  @apply transition-all duration-200 ease-out hover:scale-110 hover:text-accent-pink;
+}
+
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  height: 2px;
+  width: 100%;
+  background: #ec4899;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 200ms ease-out;
+}
+
+.link-underline:hover::after {
+  transform: scaleX(1);
+}
+
+.input-base {
+  @apply border border-slate-200 bg-white text-slate-700 transition-all duration-200 ease-out focus:border-brand-600 focus:outline-none;
+  box-shadow: 0 0 0 0 rgba(236, 72, 153, 0);
+}
+
+.input-base:focus {
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
