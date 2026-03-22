@@ -109,44 +109,53 @@ export default function AccountPage() {
     let isMounted = true;
 
     async function loadProfile() {
-      setIsLoading(true);
-      setError("");
+      try {
+        setIsLoading(true);
+        setError("");
 
-      const response = await fetch("/api/account/profile", { cache: "no-store" });
-      if (response.status === 401) {
+        const response = await fetch("/api/account/profile", { cache: "no-store" });
+        if (response.status === 401) {
+          if (isMounted) {
+            setProfile(null);
+          }
+          return;
+        }
+
+        const data = await response.json();
+        if (!response.ok) {
+          if (isMounted) {
+            setError(data.error || "Could not load account.");
+            setProfile(null);
+          }
+          return;
+        }
+
+        if (!isMounted) {
+          return;
+        }
+
+        setProfile(data);
+        setForm({
+          name: data.customer.name || "",
+          email: data.customer.email || "",
+          phone: data.customer.phone || ""
+        });
+        setPreferences(data.customer.preferences || {
+          email: true,
+          offers: true,
+          orders: true
+        });
+        setAddresses(data.customer.addresses || []);
+      } catch {
         if (isMounted) {
           setProfile(null);
-          setIsLoading(false);
+          setError("Could not load account. Please sign in again.");
         }
-        return;
-      }
-
-      const data = await response.json();
-      if (!response.ok) {
+      } finally {
         if (isMounted) {
-          setError(data.error || "Could not load account.");
           setIsLoading(false);
         }
-        return;
       }
-
-      if (!isMounted) {
-        return;
-      }
-
-      setProfile(data);
-      setForm({
-        name: data.customer.name || "",
-        email: data.customer.email || "",
-        phone: data.customer.phone || ""
-      });
-      setPreferences(data.customer.preferences || {
-        email: true,
-        offers: true,
-        orders: true
-      });
-      setAddresses(data.customer.addresses || []);
-      setIsLoading(false);
     }
 
     void loadProfile();

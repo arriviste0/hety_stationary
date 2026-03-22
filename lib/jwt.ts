@@ -1,6 +1,12 @@
 import type { Role } from "@/lib/rbac";
 
-const JWT_SECRET = process.env.JWT_SECRET || "hety-admin-dev-secret";
+const isProduction = process.env.NODE_ENV === "production";
+const JWT_SECRET =
+  process.env.JWT_SECRET || (!isProduction ? "hety-admin-dev-secret" : "");
+
+if (!JWT_SECRET) {
+  throw new Error("Missing JWT_SECRET environment variable.");
+}
 
 export type AdminTokenPayload = {
   id: string;

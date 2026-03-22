@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 
+const isProduction = process.env.NODE_ENV === "production";
 const MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/hety_stationery_admin";
+  process.env.MONGODB_URI ||
+  (!isProduction ? "mongodb://127.0.0.1:27017/hety_stationery_admin" : "");
 
 if (!MONGODB_URI) {
   throw new Error("Missing MONGODB_URI environment variable.");
