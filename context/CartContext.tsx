@@ -160,7 +160,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
     });
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       return { ok: false, error: data.error || "Login failed." };
     }
@@ -183,7 +183,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       return { ok: false, error: data.error || "Signup failed." };
     }
