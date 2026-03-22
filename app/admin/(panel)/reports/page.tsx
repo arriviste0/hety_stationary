@@ -1,4 +1,5 @@
 import { connectToDatabase } from "@/lib/mongodb";
+import "@/lib/models/customer";
 import { Order } from "@/lib/models/order";
 import { OrderItem } from "@/lib/models/orderItem";
 import { Product } from "@/lib/models/product";

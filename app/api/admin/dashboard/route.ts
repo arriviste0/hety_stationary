@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
+import "@/lib/models/customer";
 import { Product } from "@/lib/models/product";
 import { Category } from "@/lib/models/category";
 import { Order } from "@/lib/models/order";

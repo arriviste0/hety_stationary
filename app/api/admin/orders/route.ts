@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
+import "@/lib/models/customer";
 import { Order } from "@/lib/models/order";
 
 export const dynamic = "force-dynamic";

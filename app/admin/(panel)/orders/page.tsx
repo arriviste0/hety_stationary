@@ -1,4 +1,5 @@
 import { connectToDatabase } from "@/lib/mongodb";
+import "@/lib/models/customer";
 import { Order } from "@/lib/models/order";
 import OrdersTable from "@/components/admin/OrdersTable";
 import Pagination from "@/components/admin/Pagination";
