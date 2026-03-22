@@ -1,21 +1,32 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { products } from "@/data/products";
-import { categories } from "@/data/categories";
 import AddToCartButton from "@/components/ProductAddToCart";
+import { connectToDatabase } from "@/lib/mongodb";
+import { Product } from "@/lib/models/product";
+import { mapProductToStorefrontProduct } from "@/lib/storefront";
 
 type Props = {
   params: { slug: string };
 };
 
-export default function ProductPage({ params }: Props) {
-  const product = products.find((item) => item.slug === params.slug);
+export const dynamic = "force-dynamic";
+
+export default async function ProductPage({ params }: Props) {
+  await connectToDatabase();
+  const productRecord = (await Product.findOne({
+    slug: params.slug,
+    "visibility.status": "Active"
+  })
+    .populate("category")
+    .populate("brand")
+    .lean()) as Record<string, any> | null;
+
+  const product = productRecord ? mapProductToStorefrontProduct(productRecord) : null;
+
   if (!product) {
     notFound();
   }
-  const category = categories.find(
-    (item) => item.slug === product.categorySlug
-  );
+  const category = productRecord?.category as Record<string, any> | undefined;
 
   return (
     <section className="section-padding mx-auto py-12">
@@ -30,25 +41,41 @@ export default function ProductPage({ params }: Props) {
           />
         </div>
         <div>
-          <p className="text-sm uppercase tracking-wide text-brand-500">
-            {category?.name}
+          <p className="text-sm uppercase tracking-wide text-brand-500">{category?.name || "-"}</p>
+          <h1 className="mt-2 text-4xl font-display text-slate-900">{product.name}</h1>
+          <p className="mt-4 text-lg text-brand-700">
+            {product.priceLabel ?? `Rs. ${product.price}`}
           </p>
-          <h1 className="mt-2 text-4xl font-display text-slate-900">
-            {product.name}
-          </h1>
-          <p className="mt-4 text-lg text-brand-700">?{product.price}</p>
           <p className="mt-4 text-sm text-slate-600">{product.description}</p>
           {product.brand && (
             <p className="mt-3 text-sm text-slate-500">
               Brand: <span className="font-medium">{product.brand}</span>
             </p>
           )}
+          {product.specification && (
+            <p className="mt-3 text-sm text-slate-500">
+              Specifications: <span className="font-medium">{product.specification}</span>
+            </p>
+          )}
+          {productRecord?.pricing?.gstPercent ? (
+            <p className="mt-3 text-sm text-slate-500">
+              GST: <span className="font-medium">{productRecord.pricing.gstPercent}%</span>
+            </p>
+          ) : null}
+          {productRecord?.inventory?.stockQuantity !== undefined ? (
+            <p className="mt-3 text-sm text-slate-500">
+              Stock: <span className="font-medium">{productRecord.inventory.stockQuantity}</span>
+            </p>
+          ) : null}
+          {product.delivery && (
+            <p className="mt-3 text-sm text-slate-500">
+              Delivery: <span className="font-medium">{product.delivery}</span>
+            </p>
+          )}
 
           <div className="mt-6 flex items-center gap-4">
             <AddToCartButton product={product} />
-            <p className="text-xs text-slate-400">
-              Free shipping above ?999
-            </p>
+            <p className="text-xs text-slate-400">Retail and wholesale business</p>
           </div>
         </div>
       </div>

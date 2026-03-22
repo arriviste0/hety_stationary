@@ -1,43 +1,42 @@
 import { notFound } from "next/navigation";
-import { categories } from "@/data/categories";
-import { products } from "@/data/products";
-import ProductCard from "@/components/ProductCard";
+import CategoryListing from "@/components/CategoryListing";
+import { connectToDatabase } from "@/lib/mongodb";
+import { Category } from "@/lib/models/category";
+import { Product } from "@/lib/models/product";
+import {
+  mapCategoryToStorefrontCategory,
+  mapProductToStorefrontProduct
+} from "@/lib/storefront";
 
 type Props = {
   params: { slug: string };
 };
 
-export default function CategoryPage({ params }: Props) {
-  const category = categories.find((item) => item.slug === params.slug);
+export const dynamic = "force-dynamic";
+
+export default async function CategoryPage({ params }: Props) {
+  await connectToDatabase();
+  const categoryRecord = (await Category.findOne({
+    slug: params.slug,
+    status: "Active",
+    visibility: "Visible"
+  }).lean()) as Record<string, any> | null;
+
+  const category = categoryRecord ? mapCategoryToStorefrontCategory(categoryRecord) : null;
   if (!category) {
     notFound();
   }
-  const filtered = products.filter(
-    (product) => product.categorySlug === category.slug
-  );
 
-  return (
-    <section className="section-padding mx-auto py-12">
-      <div className="rounded-3xl bg-brand-50 p-8">
-        <p className="text-sm uppercase tracking-wide text-brand-500">
-          Category
-        </p>
-        <h1 className="mt-2 text-4xl font-display text-brand-800">
-          {category.name}
-        </h1>
-        <p className="mt-2 text-sm text-slate-600">
-          Curated stationery picks for {category.name.toLowerCase()}.
-        </p>
-      </div>
+  const productRecords = (await Product.find({
+    "visibility.status": "Active",
+    $or: [{ category: categoryRecord?._id }, { subcategory: categoryRecord?._id }]
+  })
+    .populate("category")
+    .populate("brand")
+    .sort({ updatedAt: -1 })
+    .lean()) as Array<Record<string, any>>;
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.length === 0 && (
-          <p className="text-sm text-slate-500">No products found.</p>
-        )}
-        {filtered.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-    </section>
-  );
+  const filtered = productRecords.map(mapProductToStorefrontProduct);
+
+  return <CategoryListing category={category} products={filtered} />;
 }

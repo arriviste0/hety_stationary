@@ -1,26 +1,36 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function PromoBanners() {
   return (
-    <section id="gifts" className="section-padding mx-auto py-16">
-      <div className="grid gap-6 lg:grid-cols-2">
+    <section className="section-padding mx-auto py-16">
+      <div className="grid gap-6 lg:grid-cols-[1.15fr,0.85fr]">
         {[
           {
-            title: "Schooling is now fun!",
-            text: "Bright kits, notebooks, and bundles ready for every grade.",
-            cta: "Shop School",
-            href: "/category/school-supplies",
-            color: "bg-accent-yellow"
+            title: "Grow with a HETY STATIONERY franchise",
+            text:
+              "We are inviting business-minded partners who want to enter or expand in the stationery segment with our brand support and customer-first approach.",
+            cta: "Franchise Enquiry",
+            href: "/franchise",
+            color: "bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 text-white",
+            textColor: "text-white/85",
+            buttonSpacing: "mt-10",
+            buttonClass:
+              "border-white/20 bg-white text-brand-700 hover:border-white hover:bg-accent-yellow hover:text-slate-900"
           },
           {
-            title: "Note it down with Hety Pens!",
-            text: "Premium pens crafted for smooth signatures and sketches.",
-            cta: "Shop Pens",
-            href: "/category/premium-pens",
-            color: "bg-accent-yellow"
+            title: "Supply support for daily retail and wholesale demand",
+            text:
+              "Serving schools, offices, resellers, and creative buyers with dependable product availability, quality focus, and flexible customer support.",
+            cta: "Contact Team",
+            href: "/contact",
+            color: "bg-brand-50 text-slate-900",
+            textColor: "text-slate-600",
+            buttonSpacing: "mt-8",
+            buttonClass:
+              "border-slate-900 bg-white text-slate-900 hover:border-slate-900 hover:bg-accent-pink hover:text-white"
           }
         ].map((banner) => (
           <motion.div
@@ -29,15 +39,18 @@ export default function PromoBanners() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
-            className={`rounded-3xl ${banner.color} p-10 text-slate-900 shadow-soft`}
+            className={`rounded-[2rem] ${banner.color} p-10 shadow-soft`}
           >
-            <h3 className="text-2xl sm:text-3xl font-display">
-              {banner.title}
-            </h3>
-            <p className="mt-3 max-w-md text-sm text-white/90">{banner.text}</p>
+            <p className="text-xs uppercase tracking-[0.3em] opacity-80">
+              Business Focus
+            </p>
+            <h3 className="mt-3 text-2xl font-display sm:text-3xl">{banner.title}</h3>
+            <p className={`mt-4 max-w-md text-sm leading-7 ${banner.textColor}`}>
+              {banner.text}
+            </p>
             <Link
               href={banner.href}
-              className="mt-6 inline-flex items-center rounded-full border border-slate-900 bg-white px-5 py-2 text-sm font-semibold uppercase tracking-wide text-slate-900 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border hover:border-slate-900 hover:bg-accent-pink hover:text-white"
+              className={`${banner.buttonSpacing} inline-flex items-center rounded-full border px-5 py-2 text-sm font-semibold uppercase tracking-wide transition-all duration-200 ease-out hover:-translate-y-0.5 ${banner.buttonClass}`}
             >
               {banner.cta}
             </Link>

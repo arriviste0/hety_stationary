@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -45,12 +45,15 @@ export default function ProductCard({ product }: { product: Product }) {
           >
             {product.name}
           </Link>
-          <p className="mt-1 text-sm text-brand-700">₹{product.price}</p>
+          <p className="mt-1 text-sm text-brand-700">
+            {product.priceLabel ?? `Rs. ${product.price}`}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">{product.brand}</p>
         </div>
         <button
           type="button"
           onClick={() => addToCart(product)}
-          className="btn-primary flex h-10 w-10 items-center justify-center opacity-100 translate-y-0 shadow-soft transition-all duration-200 ease-out sm:opacity-0 sm:translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-y-0"
+          className="btn-primary flex h-10 w-10 translate-y-0 items-center justify-center opacity-100 shadow-soft transition-all duration-200 ease-out sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100"
           aria-label="Add to cart"
         >
           <ShoppingBag size={18} />

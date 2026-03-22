@@ -3,10 +3,13 @@ export type Product = {
   name: string;
   slug: string;
   price: number;
+  priceLabel?: string;
   categorySlug: string;
   images: string[];
   rating?: number;
   description: string;
+  specification?: string;
+  delivery?: string;
   brand?: string;
   tags?: string[];
 };
@@ -14,122 +17,130 @@ export type Product = {
 export const products: Product[] = [
   {
     id: "prod-001",
-    name: "Skyline Stapler Pro",
-    slug: "skyline-stapler-pro",
-    price: 349,
-    categorySlug: "office-essentials",
-    images: ["/images/product-1.jpg"],
-    rating: 4.6,
-    description: "A sturdy metal stapler designed for smooth, jam-free use.",
-    brand: "Hety Office",
-    tags: ["stapler", "office"]
+    name: "HETY Stationery Branding Items",
+    slug: "hety-stationery-branding-items",
+    price: 49,
+    priceLabel: "Price on request",
+    categorySlug: "branding-items",
+    images: ["/images/hety_stationary.png"],
+    rating: 4.8,
+    description:
+      "Custom and branded stationery solutions supplied under the HETY STATIONERY - COPIER-ART & CRAFT label for retail, wholesale, and franchise requirements.",
+    specification: "Available in various sizes, materials, and thicknesses.",
+    delivery: "Standard delivery time applicable.",
+    brand: "HETY Stationery",
+    tags: ["branding", "customization", "franchise", "stationery"]
   },
   {
     id: "prod-002",
-    name: "Soft Grip Scissors",
-    slug: "soft-grip-scissors",
-    price: 199,
-    categorySlug: "craft",
-    images: ["/images/product-2.jpg"],
-    rating: 4.4,
-    description: "Ergonomic scissors with a precision edge for craft projects.",
-    brand: "Hety Craft",
-    tags: ["scissors", "craft"]
+    name: "Flair Writing Collection",
+    slug: "flair-writing-collection",
+    price: 10,
+    priceLabel: "Starting from Rs. 10",
+    categorySlug: "writing-instruments",
+    images: ["/images/slider1.png"],
+    rating: 4.6,
+    description:
+      "Popular Flair pens and writing essentials for schools, offices, counters, and bulk distribution.",
+    specification: "Available in various sizes, pack formats, and tip options.",
+    delivery: "Standard delivery time applicable.",
+    brand: "Flair",
+    tags: ["flair", "pens", "writing", "school"]
   },
   {
     id: "prod-003",
-    name: "Crystal Tape Dispenser",
-    slug: "crystal-tape-dispenser",
-    price: 279,
-    categorySlug: "office-essentials",
-    images: ["/images/product-3.jpg"],
-    rating: 4.2,
-    description: "Weighted dispenser with a sleek, clear finish for desks.",
-    brand: "Hety Office",
-    tags: ["tape", "desk"]
+    name: "DOMS School Essentials",
+    slug: "doms-school-essentials",
+    price: 15,
+    priceLabel: "Starting from Rs. 15",
+    categorySlug: "school-supplies",
+    images: ["/images/slider2.png"],
+    rating: 4.7,
+    description:
+      "DOMS stationery assortment covering pencils, geometry sets, colors, and day-to-day student needs.",
+    specification: "Available in various sizes, materials, and thicknesses.",
+    delivery: "Standard delivery time applicable.",
+    brand: "DOMS",
+    tags: ["doms", "school", "student", "stationery"]
   },
   {
     id: "prod-004",
-    name: "Midnight Gel Pens (Set of 6)",
-    slug: "midnight-gel-pens-set",
-    price: 499,
-    categorySlug: "premium-pens",
-    images: ["/images/product-4.jpg"],
-    rating: 4.8,
-    description: "Smooth-flow gel pens in rich midnight tones.",
-    brand: "Hety Pens",
-    tags: ["pens", "premium"]
+    name: "Saino Office and School Range",
+    slug: "saino-office-school-range",
+    price: 20,
+    priceLabel: "Price on request",
+    categorySlug: "office-supplies",
+    images: ["/images/Office_Supplies_27b30b26-e42d-4a26-9de0-5cca17c4cd83_720x.avif"],
+    rating: 4.3,
+    description:
+      "Saino utility products selected for routine office work, school counters, and wholesale supply.",
+    specification: "Available in multiple practical variants.",
+    delivery: "Standard delivery time applicable.",
+    brand: "Saino",
+    tags: ["saino", "office", "wholesale"]
   },
   {
     id: "prod-005",
-    name: "Pastel Highlighter Pack",
-    slug: "pastel-highlighter-pack",
-    price: 259,
-    categorySlug: "school-supplies",
-    images: ["/images/product-5.jpg"],
-    rating: 4.5,
-    description: "Soft pastel highlighters that glide without bleeding.",
-    brand: "Hety School",
-    tags: ["highlighter", "school"]
+    name: "Camlin Art and Craft Supplies",
+    slug: "camlin-art-craft-supplies",
+    price: 35,
+    priceLabel: "Starting from Rs. 35",
+    categorySlug: "art-and-craft",
+    images: ["/images/craft.png"],
+    rating: 4.9,
+    description:
+      "Camlin creative materials for sketching, painting, school projects, and hobby use.",
+    specification: "Available in various sizes, materials, and pack combinations.",
+    delivery: "Standard delivery time applicable.",
+    brand: "Camlin",
+    tags: ["camlin", "art", "craft", "creative"]
   },
   {
     id: "prod-006",
-    name: "Precision Hole Punch",
-    slug: "precision-hole-punch",
-    price: 399,
-    categorySlug: "office-essentials",
-    images: ["/images/product-6.jpg"],
-    rating: 4.1,
-    description: "Two-hole punch with a firm grip and clean punch.",
-    brand: "Hety Office",
-    tags: ["punch", "office"]
+    name: "Aerotix Premium Utility Products",
+    slug: "aerotix-premium-utility-products",
+    price: 99,
+    priceLabel: "Price on request",
+    categorySlug: "premium-stationery",
+    images: ["/images/Premium_Pens_720x.avif"],
+    rating: 4.4,
+    description:
+      "Aerotix product range for customers looking for sharper presentation, premium feel, and dependable usage.",
+    specification: "Available in multiple premium variants.",
+    delivery: "Standard delivery time applicable.",
+    brand: "Aerotix",
+    tags: ["aerotix", "premium", "office", "gifting"]
   },
   {
     id: "prod-007",
-    name: "Dotted Journal Notebook",
-    slug: "dotted-journal-notebook",
-    price: 299,
-    categorySlug: "notebooks",
-    images: ["/images/product-7.jpg"],
-    rating: 4.7,
-    description: "Premium dotted notebook for bullet journaling.",
-    brand: "Hety Paper",
-    tags: ["notebook", "journal"]
+    name: "Officemate Business Essentials",
+    slug: "officemate-business-essentials",
+    price: 65,
+    priceLabel: "Starting from Rs. 65",
+    categorySlug: "office-supplies",
+    images: ["/images/notebooks.png"],
+    rating: 4.5,
+    description:
+      "Officemate products for filing, desk organization, routine operations, and institutional supply.",
+    specification: "Available in various sizes and office-use formats.",
+    delivery: "Standard delivery time applicable.",
+    brand: "Officemate",
+    tags: ["officemate", "office", "business", "files"]
   },
   {
     id: "prod-008",
-    name: "Color Burst Crayons",
-    slug: "color-burst-crayons",
-    price: 189,
-    categorySlug: "crayons",
-    images: ["/images/product-8.jpg"],
-    rating: 4.3,
-    description: "Bold, smooth crayons for classroom creativity.",
-    brand: "Hety School",
-    tags: ["crayons", "school"]
-  },
-  {
-    id: "prod-009",
-    name: "Calligraphy Brush Pen Set",
-    slug: "calligraphy-brush-pen-set",
-    price: 549,
-    categorySlug: "calligraphy",
-    images: ["/images/product-9.jpg"],
-    rating: 4.9,
-    description: "Flexible brush pens with rich ink flow.",
-    brand: "Hety Pens",
-    tags: ["calligraphy", "pens"]
-  },
-  {
-    id: "prod-010",
-    name: "Mini Binder Clips Pack",
-    slug: "mini-binder-clips-pack",
-    price: 149,
-    categorySlug: "office-essentials",
-    images: ["/images/product-10.jpg"],
-    rating: 4.0,
-    description: "Pack of 24 mini clips for neat paper stacks.",
-    brand: "Hety Office",
-    tags: ["clips", "office"]
+    name: "Copier Paper and Print Support Items",
+    slug: "copier-paper-print-support-items",
+    price: 120,
+    priceLabel: "Price on request",
+    categorySlug: "copier-solutions",
+    images: ["/images/slider3.png"],
+    rating: 4.2,
+    description:
+      "Copier-related paper and support items suited for shop counters, educational use, and office demand.",
+    specification: "Available in different sizes, GSM options, and pack quantities.",
+    delivery: "Standard delivery time applicable.",
+    brand: "HETY Stationery",
+    tags: ["copier", "paper", "printing", "office"]
   }
 ];

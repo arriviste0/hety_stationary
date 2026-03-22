@@ -3,12 +3,46 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 
 export default function CartPage() {
-  const { items, subtotal, updateQuantity, removeFromCart } = useCart();
+  const { items, subtotal, updateQuantity, removeFromCart, clearCart, isLoggedIn, openAuth } = useCart();
+  const [checkoutError, setCheckoutError] = useState("");
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const shipping = subtotal > 999 ? 0 : items.length > 0 ? 80 : 0;
   const total = subtotal + shipping;
+
+  const handleCheckout = async () => {
+    setCheckoutError("");
+
+    if (!isLoggedIn) {
+      openAuth();
+      return;
+    }
+
+    setIsCheckingOut(true);
+    const response = await fetch("/api/storefront/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: items.map((item) => ({
+          productId: item.product.id,
+          quantity: item.quantity
+        }))
+      })
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      setCheckoutError(data.error || "Could not place order.");
+      setIsCheckingOut(false);
+      return;
+    }
+
+    clearCart();
+    window.location.href = "/account";
+  };
 
   return (
     <section className="section-padding mx-auto py-12">
@@ -117,11 +151,16 @@ export default function CartPage() {
                 </div>
               </div>
             </div>
+            {checkoutError ? (
+              <p className="mt-4 text-sm text-rose-600">{checkoutError}</p>
+            ) : null}
             <button
               type="button"
-              className="btn-primary mt-6 w-full py-3 text-sm font-semibold"
+              onClick={handleCheckout}
+              disabled={isCheckingOut}
+              className="btn-primary mt-6 w-full py-3 text-sm font-semibold disabled:opacity-60"
             >
-              Checkout
+              {isCheckingOut ? "Placing Order..." : "Checkout"}
             </button>
             <p className="mt-3 text-xs text-slate-500">
               Free shipping on orders above ₹999.

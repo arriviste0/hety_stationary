@@ -5,16 +5,39 @@ export type Category = {
 };
 
 export const categories: Category[] = [
-  { name: "Resin", slug: "resin", image: "/images/category-1.jpg" },
-  { name: "Craft", slug: "craft", image: "/images/category-2.jpg" },
-  { name: "Calligraphy", slug: "calligraphy", image: "/images/category-3.jpg" },
-  { name: "Notebooks", slug: "notebooks", image: "/images/category-4.jpg" },
-  { name: "Alcohol Inks", slug: "alcohol-inks", image: "/images/category-5.jpg" },
-  { name: "Crayons", slug: "crayons", image: "/images/category-6.jpg" },
-  { name: "Brush Pens", slug: "brush-pens", image: "/images/category-7.jpg" },
-  { name: "Sketch Supplies", slug: "sketch-supplies", image: "/images/category-8.jpg" },
-  { name: "Office Essentials", slug: "office-essentials", image: "/images/category-9.jpg" },
-  { name: "School Supplies", slug: "school-supplies", image: "/images/category-10.jpg" },
-  { name: "Paints", slug: "paints", image: "/images/category-11.jpg" },
-  { name: "Premium Pens", slug: "premium-pens", image: "/images/category-12.jpg" }
+  {
+    name: "Branding Items",
+    slug: "branding-items",
+    image: "/images/hety_stationary.png"
+  },
+  {
+    name: "Writing Instruments",
+    slug: "writing-instruments",
+    image: "/images/Premium_Pens_720x.avif"
+  },
+  {
+    name: "School Supplies",
+    slug: "school-supplies",
+    image: "/images/School_Supplies_720x.avif"
+  },
+  {
+    name: "Art and Craft",
+    slug: "art-and-craft",
+    image: "/images/craft.png"
+  },
+  {
+    name: "Office Supplies",
+    slug: "office-supplies",
+    image: "/images/Office_Supplies_27b30b26-e42d-4a26-9de0-5cca17c4cd83_720x.avif"
+  },
+  {
+    name: "Copier Solutions",
+    slug: "copier-solutions",
+    image: "/images/slider1.png"
+  },
+  {
+    name: "Premium Stationery",
+    slug: "premium-stationery",
+    image: "/images/slider3.png"
+  }
 ];

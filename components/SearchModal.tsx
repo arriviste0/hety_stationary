@@ -58,7 +58,7 @@ export default function SearchModal({ isOpen, onClose }: Props) {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Try gel pens, notebooks, clips..."
+              placeholder="Try DOMS, Camlin, copier, craft..."
               className="input-base mt-4 w-full rounded-2xl px-4 py-3 text-sm"
             />
 
@@ -66,22 +66,20 @@ export default function SearchModal({ isOpen, onClose }: Props) {
               {query && results.length === 0 && (
                 <p className="text-sm text-slate-500">No matches found.</p>
               )}
-                  {results.slice(0, 6).map((product) => (
-                    <Link
-                      key={product.id}
-                      href={`/product/${product.slug}`}
-                      onClick={onClose}
-                      className="block rounded-2xl border border-slate-100 p-4 text-sm transition-all duration-200 ease-out hover:border-accent-pink hover:bg-accent-pink/10"
-                    >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-slate-800">
-                      {product.name}
+              {results.slice(0, 6).map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/product/${product.slug}`}
+                  onClick={onClose}
+                  className="block rounded-2xl border border-slate-100 p-4 text-sm transition-all duration-200 ease-out hover:border-accent-pink hover:bg-accent-pink/10"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-medium text-slate-800">{product.name}</span>
+                    <span className="text-brand-600">
+                      {product.priceLabel ?? `Rs. ${product.price}`}
                     </span>
-                    <span className="text-brand-600">?{product.price}</span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {product.description}
-                  </p>
+                  <p className="mt-1 text-xs text-slate-500">{product.description}</p>
                 </Link>
               ))}
             </div>
