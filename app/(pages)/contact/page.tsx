@@ -1,3 +1,6 @@
+const BUSINESS_EMAIL = "hapyfranchise@gmail.com";
+const BUSINESS_EMAIL_HREF = `mailto:${BUSINESS_EMAIL}?subject=Business%20Enquiry`;
+
 const contacts = [
   {
     title: "Call Us",
@@ -5,7 +8,7 @@ const contacts = [
   },
   {
     title: "Email Us",
-    text: "hapyfranchise@gmail.com"
+    text: BUSINESS_EMAIL
   },
   {
     title: "WhatsApp",
@@ -75,7 +78,7 @@ export default function ContactPage() {
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <a
-              href="mailto:hapyfranchise@gmail.com"
+              href={BUSINESS_EMAIL_HREF}
               className="btn-primary px-6 py-3 text-sm font-semibold"
             >
               Email Sales

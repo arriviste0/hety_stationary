@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Instagram, MapPin, Phone, Mail } from "lucide-react";
 
+const BUSINESS_EMAIL = "hapyfranchise@gmail.com";
+const BUSINESS_EMAIL_HREF = `mailto:${BUSINESS_EMAIL}?subject=Business%20Enquiry`;
+
 export default function Footer() {
   return (
     <footer className="border-t border-brand-100 bg-white text-slate-700">
@@ -73,8 +76,8 @@ export default function Footer() {
             </p>
             <p className="flex items-center gap-2">
               <Mail size={16} className="text-brand-600" />
-              <a href="mailto:hapyfranchise@gmail.com" className="link-underline text-brand-600">
-                hapyfranchise@gmail.com
+              <a href={BUSINESS_EMAIL_HREF} className="link-underline text-brand-600">
+                {BUSINESS_EMAIL}
               </a>
             </p>
             <p className="flex items-center gap-2">
