@@ -5,12 +5,12 @@ export default function TermsPage() {
         <h1 className="text-3xl font-display text-slate-900">Terms and Conditions</h1>
         <div className="mt-6 space-y-4 text-sm text-slate-600">
           <p>
-            Orders are processed only after confirmation from HETY FRANCHISE LLP
+            Orders are processed only after confirmation from HAPY FRANCHISE LLP
             and subject to product availability.
           </p>
           <p>Payment terms: advance payment.</p>
           <p>
-            HETY FRANCHISE LLP may cancel orders or franchises if any abnormality,
+            HAPY FRANCHISE LLP may cancel orders or franchises if any abnormality,
             mismatch, or business risk is identified.
           </p>
           <p>

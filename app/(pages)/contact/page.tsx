@@ -23,7 +23,7 @@ export default function ContactPage() {
       <div className="rounded-3xl border border-brand-100 bg-white p-8 shadow-soft">
         <p className="text-xs uppercase tracking-wide text-accent-pink">Contact Us</p>
         <h1 className="mt-2 text-3xl font-display text-slate-900">
-          Contact HETY FRANCHISE LLP
+          Contact HAPY FRANCHISE LLP
         </h1>
         <p className="mt-4 text-sm text-slate-600">
           Reach us for product enquiries, wholesale supply, store support, or
@@ -45,7 +45,7 @@ export default function ContactPage() {
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-brand-100 p-4">
               <p className="text-xs uppercase tracking-wide text-accent-pink">Company Name</p>
-              <p className="mt-2 text-sm text-slate-600">HETY FRANCHISE LLP</p>
+              <p className="mt-2 text-sm text-slate-600">HAPY FRANCHISE LLP</p>
             </div>
             <div className="rounded-2xl border border-brand-100 p-4">
               <p className="text-xs uppercase tracking-wide text-accent-pink">Brand Name</p>

@@ -41,7 +41,7 @@ export default function AboutPage() {
               for stationery, copier, art and craft business.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600">
-              HETY STATIONERY started in Dehgam in 2022 with self interest.
+              HETY STATIONERY started in Dehgam in 2022 with self-interest.
               Considering business growth opportunities, the family business was
               expanded under HAPY FRANCHISE LLP with fresh HETY STATIONERY
               branding in February 2026.

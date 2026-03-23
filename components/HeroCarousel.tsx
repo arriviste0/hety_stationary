@@ -19,7 +19,7 @@ const slides = [
     id: "slide-2",
     headline: "Built from Dehgam, expanding with a 100+ store vision across India.",
     subtext:
-      "HETY FRANCHISE LLP is growing HETY STATIONERY through customer-first service, strong product mix, and franchise opportunities.",
+      "HAPY FRANCHISE LLP is growing HETY STATIONERY through customer-first service, strong product mix, and franchise opportunities.",
     cta: "Explore Franchise",
     href: "/franchise",
     image: "/images/slider2.png"

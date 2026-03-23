@@ -54,7 +54,7 @@ export default function CreateAccountView() {
           Create Account
         </p>
         <h1 className="mt-2 text-3xl font-display text-slate-900">
-          Join Hety Stationery
+          Join HETY STATIONERY
         </h1>
         <p className="mt-3 text-sm text-slate-600">
           Create an account to track orders, save addresses, and build your

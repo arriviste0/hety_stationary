@@ -18,7 +18,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "HETY STATIONERY - COPIER-ART & CRAFT",
   description:
-    "HETY FRANCHISE LLP runs HETY STATIONERY as a retailer, wholesaler, and franchise-focused business for stationery, copier, art and craft products."
+    "HAPY FRANCHISE LLP runs HETY STATIONERY as a retailer, wholesaler, and franchise-focused business for stationery, copier, art and craft products."
 };
 
 export default function RootLayout({

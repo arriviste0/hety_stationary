@@ -92,7 +92,7 @@ export default function CartDrawer() {
                           {item.product.name}
                         </p>
                         <p className="mt-1 text-xs text-slate-500">
-                          {item.product.brand ?? "Hety Studio"}
+                          {item.product.brand ?? "HETY STATIONERY"}
                         </p>
                       </div>
                       <span className="text-sm font-semibold text-brand-700">

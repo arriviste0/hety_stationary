@@ -29,7 +29,7 @@ export default function FranchisePage() {
         <div className="rounded-3xl border border-brand-100 bg-white p-6 shadow-soft">
           <h2 className="text-lg font-semibold text-brand-700">Contact for Franchise</h2>
           <div className="mt-4 space-y-3 text-sm text-slate-600">
-            <p>Company: HETY FRANCHISE LLP</p>
+            <p>Company: HAPY FRANCHISE LLP</p>
             <p>Phones: +91 97149 92464, +91 98791 52220, +91 9979242499</p>
             <p>Email: HETYfranchise@gmail.com</p>
             <p>

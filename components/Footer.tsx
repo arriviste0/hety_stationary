@@ -25,7 +25,7 @@ export default function Footer() {
             </div>
           </div>
           <p className="mt-4 text-sm text-slate-600">
-            HETY FRANCHISE LLP operates HETY STATIONERY - COPIER-ART & CRAFT as a
+            HAPY FRANCHISE LLP operates HETY STATIONERY - COPIER-ART & CRAFT as a
             retailer, wholesaler, and franchise-focused stationery business.
           </p>
           <div className="mt-6 space-y-2 text-sm text-slate-500">
@@ -104,7 +104,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-brand-100 py-4 text-center text-xs text-slate-500">
-        Copyright 2026 HETY FRANCHISE LLP. All rights reserved.
+        Copyright 2026 HAPY FRANCHISE LLP. All rights reserved.
       </div>
     </footer>
   );

@@ -91,7 +91,7 @@ export default function CartPage() {
                     {item.product.name}
                   </p>
                   <p className="mt-1 text-xs text-slate-500">
-                    {item.product.brand ?? "Hety Studio"}
+                    {item.product.brand ?? "HETY STATIONERY"}
                   </p>
                   <p className="mt-2 text-sm text-brand-600">₹{item.product.price}</p>
                   <div className="mt-4 flex flex-wrap items-center gap-3">
