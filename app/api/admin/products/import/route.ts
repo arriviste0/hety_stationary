@@ -8,6 +8,13 @@ import { slugify } from "@/lib/utils/slug";
 
 export const dynamic = "force-dynamic";
 
+function parseImageUrls(value: string) {
+  return String(value || "")
+    .split("|")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function parseCsvLine(line: string) {
   const result: string[] = [];
   let current = "";
@@ -82,6 +89,7 @@ export async function POST(request: Request) {
       slug: row.slug?.trim() || slugify(name),
       category: category?._id,
       brand: brand?._id,
+      imageUrls: parseImageUrls(row.imageUrls || row.imageUrl || row.image),
       pricing: {
         mrp: Number(row.mrp || 0),
         sellingPrice: Number(row.sellingPrice || 0),

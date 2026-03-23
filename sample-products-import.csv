@@ -1,0 +1,4 @@
+name,sku,slug,category,brand,imageUrls,mrp,sellingPrice,costPrice,stockQuantity,status
+Apsara Pencil Box,APS-PB-001,apsara-pencil-box,School Supplies,Apsara,/images/notebooks.png,120,99,70,50,Active
+Camel Acrylic Colour Set,CAM-ACR-012,camel-acrylic-colour-set,Art & Craft Supplies,Camel,/images/craft.png|https://example.com/camel-acrylic-colour-set.jpg,350,299,220,25,Active
+Office File Folder,OFF-FILE-021,office-file-folder,Office Supplies,Generic,/images/Office_Supplies_27b30b26-e42d-4a26-9de0-5cca17c4cd83_720x.avif,80,65,40,100,Active
