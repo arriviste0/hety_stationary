@@ -175,6 +175,7 @@ export default function AdminSidebar({
   onCloseMobile
 }: AdminSidebarProps) {
   const pathname = usePathname();
+  const roleLabel = role === "super_admin" ? "Admin" : role.replace(/_/g, " ");
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     Overview: true,
     Catalog: true,
@@ -211,7 +212,7 @@ export default function AdminSidebar({
             HETY Admin
           </Link>
           <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-emerald-700 sm:text-xs">
-            {role.replace(/_/g, " ")}
+            {roleLabel}
           </span>
         </div>
         <nav className="h-[calc(100vh-4rem)] overflow-y-auto px-3 pb-6 pt-4 sm:px-4">

@@ -2,7 +2,7 @@
 
 import type { FormEventHandler } from "react";
 import { useState } from "react";
-import { Bell, ChevronDown, Menu, Search } from "lucide-react";
+import { ChevronDown, Menu, Search } from "lucide-react";
 import type { Role } from "@/lib/rbac";
 
 type AdminTopbarProps = {
@@ -21,6 +21,7 @@ export default function AdminTopbar({
   logoutAction
 }: AdminTopbarProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const roleLabel = role === "super_admin" ? "Admin" : role.replace(/_/g, " ");
 
   const handleSearch: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -48,16 +49,6 @@ export default function AdminTopbar({
           </form>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            className="relative rounded-full border border-slate-200 p-2 text-slate-600 hover:bg-slate-100"
-            aria-label="Notifications"
-          >
-            <Bell size={18} />
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-semibold text-white">
-              4
-            </span>
-          </button>
           <div className="relative">
             <button
               type="button"
@@ -76,7 +67,7 @@ export default function AdminTopbar({
                 <p className="mt-1 text-sm font-semibold text-slate-700">{name}</p>
                 <p className="text-xs text-slate-500">{email}</p>
                 <div className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
-                  Role: <span className="font-semibold capitalize text-slate-700">{role.replace(/_/g, " ")}</span>
+                  Role: <span className="font-semibold capitalize text-slate-700">{roleLabel}</span>
                 </div>
                 <form action={logoutAction} className="mt-3">
                   <button

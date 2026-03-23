@@ -95,8 +95,39 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
           <h2 className="text-sm font-semibold text-slate-700">Recent Orders</h2>
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="mt-4 space-y-3 md:hidden">
+            {recentOrders.map((order) => (
+              <div
+                key={order._id.toString()}
+                className="rounded-xl border border-slate-200 bg-slate-50 p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">{order.orderId}</p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {(order.customer as { name?: string })?.name || "-"}
+                    </p>
+                  </div>
+                  <p className="text-sm font-semibold text-slate-700">Rs. {order.totalAmount}</p>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-slate-600">
+                  <div>
+                    <p className="uppercase tracking-wide text-slate-400">Status</p>
+                    <p className="mt-1 font-medium text-slate-700">{order.orderStatus}</p>
+                  </div>
+                  <div>
+                    <p className="uppercase tracking-wide text-slate-400">Payment</p>
+                    <p className="mt-1 font-medium text-slate-700">{order.paymentStatus}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {recentOrders.length === 0 && (
+              <p className="text-sm text-slate-500">No recent orders found.</p>
+            )}
+          </div>
+          <div className="mt-4 hidden overflow-x-auto md:block">
+            <table className="min-w-[640px] w-full text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-3 py-2">Order</th>
@@ -116,6 +147,13 @@ export default async function AdminDashboardPage() {
                     <td className="px-3 py-2">{order.paymentStatus}</td>
                   </tr>
                 ))}
+                {recentOrders.length === 0 && (
+                  <tr className="border-t border-slate-100">
+                    <td colSpan={5} className="px-3 py-4 text-center text-sm text-slate-500">
+                      No recent orders found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
