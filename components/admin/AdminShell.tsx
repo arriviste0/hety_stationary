@@ -26,15 +26,15 @@ export default function AdminShell({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-900">
       <AdminToastListener />
-      <div className="flex">
+      <div className="flex min-w-0">
         <AdminSidebar
           role={role}
           isMobileOpen={mobileOpen}
           onCloseMobile={() => setMobileOpen(false)}
         />
-        <div className="flex min-h-screen flex-1 flex-col">
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col">
           <AdminTopbar
             role={role}
             name={name}
@@ -42,7 +42,7 @@ export default function AdminShell({
             onOpenMobile={() => setMobileOpen(true)}
             logoutAction={logoutAction}
           />
-          <div className="px-6 pb-10 pt-6">
+          <div className="min-w-0 px-4 pb-8 pt-4 sm:px-6 sm:pb-10 sm:pt-6">
             <AdminBreadcrumbs />
             <div className="mt-6">{children}</div>
           </div>

@@ -202,19 +202,19 @@ export default function AdminSidebar({
         />
       )}
       <aside
-        className={`fixed left-0 top-0 z-40 h-full w-72 border-r border-slate-200 bg-white/95 backdrop-blur transition-transform duration-200 lg:static lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-40 h-full w-[86vw] max-w-72 border-r border-slate-200 bg-white/95 backdrop-blur transition-transform duration-200 lg:static lg:w-72 lg:max-w-none lg:translate-x-0 ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5">
-          <Link href="/admin" className="text-lg font-semibold text-slate-900">
+        <div className="flex h-16 items-center justify-between gap-3 border-b border-slate-200 px-4 sm:px-5">
+          <Link href="/admin" className="truncate text-base font-semibold text-slate-900 sm:text-lg">
             HETY Admin
           </Link>
-          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold uppercase text-emerald-700">
+          <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-emerald-700 sm:text-xs">
             {role.replace(/_/g, " ")}
           </span>
         </div>
-        <nav className="h-[calc(100vh-4rem)] overflow-y-auto px-4 pb-6 pt-4">
+        <nav className="h-[calc(100vh-4rem)] overflow-y-auto px-3 pb-6 pt-4 sm:px-4">
           {sections.map((section) => (
             <div key={section.title} className="mb-4">
               <button

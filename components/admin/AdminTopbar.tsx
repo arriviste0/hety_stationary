@@ -28,8 +28,8 @@ export default function AdminTopbar({
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur">
-      <div className="flex h-16 items-center justify-between gap-4 px-6">
-        <div className="flex items-center gap-3">
+      <div className="flex min-h-16 items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-0">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={onOpenMobile}
@@ -43,11 +43,11 @@ export default function AdminTopbar({
             <input
               type="search"
               placeholder="Search orders, products, customers"
-              className="w-72 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
+              className="w-56 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 lg:w-72"
             />
           </form>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <button
             type="button"
             className="relative rounded-full border border-slate-200 p-2 text-slate-600 hover:bg-slate-100"
@@ -62,16 +62,16 @@ export default function AdminTopbar({
             <button
               type="button"
               onClick={() => setIsProfileOpen((open) => !open)}
-              className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="flex items-center gap-2 rounded-full border border-slate-200 px-2 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:px-3"
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-white">
                 {name?.[0] || "A"}
               </span>
-              <span className="hidden sm:block">{name || "Admin User"}</span>
+              <span className="hidden max-w-32 truncate sm:block">{name || "Admin User"}</span>
               <ChevronDown size={16} className="text-slate-500" />
             </button>
             {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-3 shadow-soft">
+              <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-3 shadow-soft">
                 <p className="text-xs font-semibold uppercase text-slate-400">Signed in as</p>
                 <p className="mt-1 text-sm font-semibold text-slate-700">{name}</p>
                 <p className="text-xs text-slate-500">{email}</p>
@@ -91,7 +91,7 @@ export default function AdminTopbar({
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-2 border-t border-slate-200 px-6 py-3 md:hidden">
+      <div className="flex items-center gap-2 border-t border-slate-200 px-4 py-3 sm:px-6 md:hidden">
         <Search size={16} className="text-slate-400" />
         <input
           type="search"

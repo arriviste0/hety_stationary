@@ -136,7 +136,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="section-padding mx-auto flex items-center justify-between py-4">
+      <div className="section-padding mx-auto flex items-center justify-between gap-3 py-3 sm:py-4">
         <div className="flex items-center gap-3 xl:hidden">
           <button
             type="button"
@@ -153,19 +153,19 @@ export default function Header() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3">
             <Image
               src="/images/logo.png"
               alt="HETY STATIONERY logo"
               width={56}
               height={56}
-              className="h-12 w-12 rounded-xl object-contain sm:h-14 sm:w-14"
+              className="h-9 w-9 rounded-lg object-contain sm:h-14 sm:w-14 sm:rounded-xl"
             />
             <div>
-              <p className="text-xl font-display text-brand-700 sm:text-2xl">
+              <p className="text-base font-display leading-tight text-brand-700 sm:text-2xl">
                 HETY STATIONERY
               </p>
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-slate-500 sm:text-xs sm:tracking-[0.2em]">
                 Copier-Art & Craft
               </p>
             </div>
@@ -222,7 +222,7 @@ export default function Header() {
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex items-center gap-4"
+          className="flex items-center gap-2 sm:gap-4"
         >
           <button
             type="button"
@@ -373,10 +373,10 @@ export default function Header() {
       <button
         type="button"
         onClick={toggleCart}
-        className="btn-primary fixed right-6 top-1/2 z-50 flex h-14 w-14 -translate-y-1/2 items-center justify-center shadow-card"
+        className="btn-primary fixed right-4 top-1/2 z-50 flex h-12 w-12 -translate-y-1/2 items-center justify-center shadow-card sm:right-6 sm:h-14 sm:w-14"
         aria-label="Open cart"
       >
-        <ShoppingBag size={22} />
+        <ShoppingBag size={20} />
         {cartCount > 0 && (
           <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent-yellow text-[11px] font-semibold text-slate-900">
             {cartCount}
