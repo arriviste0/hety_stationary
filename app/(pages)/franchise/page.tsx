@@ -31,7 +31,7 @@ export default function FranchisePage() {
           <div className="mt-4 space-y-3 text-sm text-slate-600">
             <p>Company: HAPY FRANCHISE LLP</p>
             <p>Phones: +91 97149 92464, +91 98791 52220, +91 9979242499</p>
-            <p>Email: HETYfranchise@gmail.com</p>
+            <p>Email: hapyfranchise@gmail.com</p>
             <p>
               Instagram:{" "}
               <a

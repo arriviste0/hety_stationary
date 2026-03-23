@@ -5,7 +5,7 @@ const contacts = [
   },
   {
     title: "Email Us",
-    text: "HETYfranchise@gmail.com"
+    text: "hapyfranchise@gmail.com"
   },
   {
     title: "WhatsApp",
@@ -75,7 +75,7 @@ export default function ContactPage() {
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <a
-              href="mailto:HETYfranchise@gmail.com"
+              href="mailto:hapyfranchise@gmail.com"
               className="btn-primary px-6 py-3 text-sm font-semibold"
             >
               Email Sales

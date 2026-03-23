@@ -73,8 +73,8 @@ export default function Footer() {
             </p>
             <p className="flex items-center gap-2">
               <Mail size={16} className="text-brand-600" />
-              <a href="mailto:HETYfranchise@gmail.com" className="link-underline text-brand-600">
-                HETYfranchise@gmail.com
+              <a href="mailto:hapyfranchise@gmail.com" className="link-underline text-brand-600">
+                hapyfranchise@gmail.com
               </a>
             </p>
             <p className="flex items-center gap-2">

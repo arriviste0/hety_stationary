@@ -12,14 +12,14 @@ export default function NewsletterStrip() {
                 Connect for supply, stores, or franchise discussion
               </h3>
               <p className="mt-4 text-sm leading-7 text-slate-600">
-                Email HETYfranchise@gmail.com or call our team for product,
+                Email hapyfranchise@gmail.com or call our team for product,
                 wholesale, or franchise support. We work with a practical
                 approach and direct communication.
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[360px]">
               <a
-                href="mailto:HETYfranchise@gmail.com"
+                href="mailto:hapyfranchise@gmail.com"
                 className="btn-primary inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold"
               >
                 Email Us
