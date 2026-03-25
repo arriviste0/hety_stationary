@@ -14,6 +14,13 @@ Create `.env.local`:
 ```env
 MONGODB_URI=mongodb://127.0.0.1:27017/hety_stationery_admin
 JWT_SECRET=replace-this-with-a-secure-secret
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=notifications@example.com
+SMTP_PASS=replace-this-password
+SMTP_FROM=notifications@example.com
+SMTP_SECURE=false
+ADMIN_NOTIFICATION_EMAIL=pranshu.arvind.patel@gmail.com
 ```
 
 ## Seed Demo Admin Data

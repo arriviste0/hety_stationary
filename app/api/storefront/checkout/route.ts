@@ -5,6 +5,7 @@ import { Customer } from "@/lib/models/customer";
 import { Product } from "@/lib/models/product";
 import { Order } from "@/lib/models/order";
 import { OrderItem } from "@/lib/models/orderItem";
+import { sendOrderPlacedNotifications } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -117,6 +118,25 @@ export async function POST(request: Request) {
       }
     }
   );
+
+  try {
+    await sendOrderPlacedNotifications({
+      orderId,
+      totalAmount,
+      customerName: customer.name || "Customer",
+      customerEmail: customer.email || undefined,
+      customerPhone: customer.phone || undefined,
+      notifyCustomer: Boolean(customer.preferences?.email && customer.preferences?.orders),
+      shippingAddress: order.shippingAddress,
+      items: validItems.map((item) => ({
+        name: String(item.product?.name || "Product"),
+        quantity: item.quantity,
+        price: Number(item.product?.pricing?.sellingPrice || 0)
+      }))
+    });
+  } catch (error) {
+    console.error("Failed to send order notifications", error);
+  }
 
   return NextResponse.json({ ok: true, orderId });
 }
