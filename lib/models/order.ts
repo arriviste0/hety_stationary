@@ -5,11 +5,21 @@ const OrderSchema = new Schema(
     orderId: { type: String, required: true, unique: true, index: true },
     date: { type: Date, default: Date.now },
     customer: { type: Schema.Types.ObjectId, ref: "Customer" },
+    paymentMode: {
+      type: String,
+      enum: ["COD", "PhonePe"],
+      default: "COD"
+    },
     paymentStatus: {
       type: String,
       enum: ["Paid", "Pending", "Failed", "Refunded"],
       default: "Pending"
     },
+    paymentGateway: { type: String },
+    paymentGatewayOrderId: { type: String },
+    paymentGatewayTransactionId: { type: String },
+    paymentGatewayRedirectUrl: { type: String },
+    metricsRecorded: { type: Boolean, default: false },
     orderStatus: {
       type: String,
       enum: [

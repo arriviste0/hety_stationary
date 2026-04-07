@@ -38,18 +38,18 @@ const AdminSettingSchema = new Schema(
       brandsSectionBody: {
         type: String,
         default:
-          "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials."
+          "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use."
       },
       brandsSectionItems: [{ type: String }],
       productRangeEyebrow: { type: String, default: "Product Range" },
       productRangeHeading: {
         type: String,
-        default: "Stationery, copier, art and craft essentials"
+        default: "Everyday stationery for school, office, and creative work"
       },
       productRangeDescription: {
         type: String,
         default:
-          "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials."
+          "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use."
       }
     }
   },

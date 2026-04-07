@@ -10,6 +10,7 @@ export default function CartPage() {
   const { items, subtotal, updateQuantity, removeFromCart, clearCart, isLoggedIn, openAuth } = useCart();
   const [checkoutError, setCheckoutError] = useState("");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [paymentMode, setPaymentMode] = useState<"COD" | "PhonePe">("COD");
   const shipping = subtotal > 999 ? 0 : items.length > 0 ? 80 : 0;
   const total = subtotal + shipping;
 
@@ -26,6 +27,7 @@ export default function CartPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        paymentMode,
         items: items.map((item) => ({
           productId: item.product.id,
           quantity: item.quantity
@@ -37,6 +39,13 @@ export default function CartPage() {
       const data = await response.json().catch(() => ({}));
       setCheckoutError(data.error || "Could not place order.");
       setIsCheckingOut(false);
+      return;
+    }
+
+    const data = await response.json().catch(() => ({}));
+
+    if (paymentMode === "PhonePe" && data.redirectUrl) {
+      window.location.href = data.redirectUrl;
       return;
     }
 
@@ -151,6 +160,55 @@ export default function CartPage() {
                 </div>
               </div>
             </div>
+            <div className="mt-6">
+              <p className="text-sm font-semibold text-slate-800">Payment Mode</p>
+              <div className="mt-3 grid gap-3">
+                <label
+                  className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                    paymentMode === "COD"
+                      ? "border-brand-600 bg-brand-50"
+                      : "border-slate-200 bg-white hover:border-brand-200"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMode"
+                    value="COD"
+                    checked={paymentMode === "COD"}
+                    onChange={() => setPaymentMode("COD")}
+                    className="mt-1 h-4 w-4"
+                  />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Cash on Delivery</p>
+                    <p className="mt-1 text-xs leading-6 text-slate-500">
+                      Place the order now and pay when it is delivered.
+                    </p>
+                  </div>
+                </label>
+                <label
+                  className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                    paymentMode === "PhonePe"
+                      ? "border-brand-600 bg-brand-50"
+                      : "border-slate-200 bg-white hover:border-brand-200"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMode"
+                    value="PhonePe"
+                    checked={paymentMode === "PhonePe"}
+                    onChange={() => setPaymentMode("PhonePe")}
+                    className="mt-1 h-4 w-4"
+                  />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">PhonePe</p>
+                    <p className="mt-1 text-xs leading-6 text-slate-500">
+                      Pay online through the PhonePe checkout page.
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
             {checkoutError ? (
               <p className="mt-4 text-sm text-rose-600">{checkoutError}</p>
             ) : null}
@@ -160,7 +218,13 @@ export default function CartPage() {
               disabled={isCheckingOut}
               className="btn-primary mt-6 w-full py-3 text-sm font-semibold disabled:opacity-60"
             >
-              {isCheckingOut ? "Placing Order..." : "Checkout"}
+              {isCheckingOut
+                ? paymentMode === "PhonePe"
+                  ? "Redirecting to PhonePe..."
+                  : "Placing Order..."
+                : paymentMode === "PhonePe"
+                ? "Pay with PhonePe"
+                : "Checkout"}
             </button>
             <p className="mt-3 text-xs text-slate-500">
               Free shipping on orders above ₹999.

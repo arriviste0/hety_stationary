@@ -106,10 +106,10 @@ export async function saveAdminSettings(formData: FormData) {
         brandsSectionBody: hasField("brandsSectionBody")
           ? String(
               formData.get("brandsSectionBody") ||
-                "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials."
+                "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use."
             )
           : existingStorefrontContent.brandsSectionBody ||
-            "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials.",
+            "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use.",
         brandsSectionItems: parsedBrandSectionItems
         ,
         productRangeEyebrow: hasField("productRangeEyebrow")
@@ -118,17 +118,17 @@ export async function saveAdminSettings(formData: FormData) {
         productRangeHeading: hasField("productRangeHeading")
           ? String(
               formData.get("productRangeHeading") ||
-                "Stationery, copier, art and craft essentials"
+                "Everyday stationery for school, office, and creative work"
             )
           : existingStorefrontContent.productRangeHeading ||
-            "Stationery, copier, art and craft essentials",
+            "Everyday stationery for school, office, and creative work",
         productRangeDescription: hasField("productRangeDescription")
           ? String(
               formData.get("productRangeDescription") ||
-                "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials."
+                "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use."
             )
           : existingStorefrontContent.productRangeDescription ||
-            "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials."
+            "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use."
       }
     },
     { upsert: true }

@@ -5,7 +5,7 @@ import { Category } from "@/lib/models/category";
 import { Brand } from "@/lib/models/brand";
 import ProductsTable from "@/components/admin/ProductsTable";
 import Pagination from "@/components/admin/Pagination";
-import { deleteProduct } from "@/lib/actions/products";
+import { deleteProduct, deleteProducts } from "@/lib/actions/products";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +64,7 @@ export default async function ProductsPage({
         categories={categoryNames}
         brands={brandNames}
         deleteProduct={deleteProduct}
+        deleteProducts={deleteProducts}
       />
       <Pagination page={page} total={total} limit={limit} basePath="/admin/catalog/products" />
     </div>

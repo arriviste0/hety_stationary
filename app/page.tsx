@@ -12,6 +12,13 @@ import { mapProductToStorefrontProduct, normalizeImageUrl } from "@/lib/storefro
 
 export const dynamic = "force-dynamic";
 
+const legacyProductRangeHeading = "Stationery, copier, art and craft essentials";
+const legacyProductRangeDescription =
+  "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials.";
+const defaultProductRangeHeading = "Everyday stationery for school, office, and creative work";
+const defaultProductRangeDescription =
+  "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use.";
+
 const quickPoints = [
   {
     title: "Retail and wholesale",
@@ -71,9 +78,8 @@ export default async function Home() {
   let featuredProducts = [] as ReturnType<typeof mapProductToStorefrontProduct>[];
   let productRangeSection = {
     eyebrow: "Product Range",
-    heading: "Stationery, copier, art and craft essentials",
-    description:
-      "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials."
+    heading: defaultProductRangeHeading,
+    description: defaultProductRangeDescription
   };
   let brandsSection = {
     eyebrow: "Product Range",
@@ -123,10 +129,13 @@ export default async function Home() {
         eyebrow:
           storefrontContent.productRangeEyebrow || productRangeSection.eyebrow,
         heading:
-          storefrontContent.productRangeHeading || productRangeSection.heading,
+          storefrontContent.productRangeHeading === legacyProductRangeHeading
+            ? defaultProductRangeHeading
+            : storefrontContent.productRangeHeading || productRangeSection.heading,
         description:
-          storefrontContent.productRangeDescription ||
-          productRangeSection.description
+          storefrontContent.productRangeDescription === legacyProductRangeDescription
+            ? defaultProductRangeDescription
+            : storefrontContent.productRangeDescription || productRangeSection.description
       };
 
       brandsSection = {

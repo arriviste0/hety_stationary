@@ -208,3 +208,19 @@ export async function deleteProduct(id: string) {
   revalidatePath("/admin/catalog/products");
   redirect("/admin/catalog/products?toast=Product%20deleted");
 }
+
+export async function deleteProducts(formData: FormData) {
+  await connectToDatabase();
+  const ids = formData
+    .getAll("productIds")
+    .map((value) => String(value))
+    .filter(Boolean);
+
+  if (ids.length === 0) {
+    redirect("/admin/catalog/products?toast=No%20products%20selected");
+  }
+
+  await Product.deleteMany({ _id: { $in: ids } });
+  revalidatePath("/admin/catalog/products");
+  redirect(`/admin/catalog/products?toast=${encodeURIComponent(`${ids.length} products deleted`)}`);
+}

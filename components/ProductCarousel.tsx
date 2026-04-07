@@ -27,43 +27,54 @@ export default function ProductCarousel({
   return (
     <section id="trending" className="bg-white py-16">
       <div className="section-padding mx-auto">
-        <div className="rounded-[2rem] border border-brand-100 bg-white p-6 shadow-soft sm:p-8">
-          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-accent-pink">
+        <div className="overflow-hidden rounded-[2rem] border border-brand-100 bg-[linear-gradient(135deg,#f8fbff_0%,#ffffff_48%,#fff7ed_100%)] shadow-soft">
+          <div className="grid gap-6 border-b border-brand-100/80 p-6 sm:p-8 lg:grid-cols-[minmax(0,1.3fr)_auto] lg:items-end">
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/70 bg-white/80 p-6 shadow-[0_20px_45px_rgba(37,99,235,0.08)] backdrop-blur">
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.22),transparent_70%)]" />
+              <p className="text-xs font-semibold uppercase tracking-[0.34em] text-accent-pink">
                 {content?.eyebrow || "Product Range"}
               </p>
-              <h2 className="mt-2 text-3xl font-display text-slate-900">
-                {content?.heading || "Stationery, copier, art and craft essentials"}
+              <h2 className="mt-3 max-w-2xl text-3xl font-display leading-tight text-slate-900 sm:text-[2.2rem]">
+                {content?.heading || "Everyday stationery for school, office, and creative work"}
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-[0.95rem]">
                 {content?.description ||
-                  "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials."}
+                  "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use."}
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => scroll("left")}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-600 bg-white text-brand-600 transition-all duration-200 ease-out hover:scale-105 hover:bg-brand-600 hover:text-white"
-                aria-label="Scroll left"
-              >
-                <ArrowLeft size={18} />
-              </button>
-              <button
-                type="button"
-                onClick={() => scroll("right")}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-600 bg-white text-brand-600 transition-all duration-200 ease-out hover:scale-105 hover:bg-brand-600 hover:text-white"
-                aria-label="Scroll right"
-              >
-                <ArrowRight size={18} />
-              </button>
+            <div className="flex items-center justify-between gap-4 rounded-[1.25rem] border border-brand-100 bg-white/85 px-4 py-3 backdrop-blur lg:justify-end">
+              <div className="pr-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-400">
+                  Browse
+                </p>
+                <p className="mt-1 text-sm font-medium text-slate-600">
+                  Swipe through featured items
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => scroll("left")}
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-brand-600 bg-white text-brand-600 transition-all duration-200 ease-out hover:scale-105 hover:bg-brand-600 hover:text-white"
+                  aria-label="Scroll left"
+                >
+                  <ArrowLeft size={18} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scroll("right")}
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-brand-600 bg-white text-brand-600 transition-all duration-200 ease-out hover:scale-105 hover:bg-brand-600 hover:text-white"
+                  aria-label="Scroll right"
+                >
+                  <ArrowRight size={18} />
+                </button>
+              </div>
             </div>
           </div>
 
           <div
             ref={scrollerRef}
-            className="mt-8 flex items-stretch gap-6 overflow-x-auto pb-4 scrollbar-hide"
+            className="flex items-stretch gap-6 overflow-x-auto p-6 pb-8 scrollbar-hide sm:px-8"
           >
             {products.map((product) => (
               <div key={product.id} className="h-full min-w-[240px] max-w-[260px] flex-1">

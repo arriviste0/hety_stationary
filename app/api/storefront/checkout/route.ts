@@ -6,6 +6,7 @@ import { Product } from "@/lib/models/product";
 import { Order } from "@/lib/models/order";
 import { OrderItem } from "@/lib/models/orderItem";
 import { sendOrderPlacedNotifications } from "@/lib/notifications";
+import { createPhonePePayment, isPhonePeConfigured } from "@/lib/phonepe";
 
 export const dynamic = "force-dynamic";
 
@@ -19,11 +20,23 @@ export async function POST(request: Request) {
 
   const body = (await request.json()) as {
     items?: Array<{ productId: string; quantity: number }>;
+    paymentMode?: "COD" | "PhonePe";
   };
+  const paymentMode = body.paymentMode === "PhonePe" ? "PhonePe" : "COD";
 
   const items = Array.isArray(body.items) ? body.items.filter((item) => item.productId && item.quantity > 0) : [];
   if (items.length === 0) {
     return NextResponse.json({ error: "Cart is empty." }, { status: 400 });
+  }
+
+  if (paymentMode === "PhonePe" && !isPhonePeConfigured()) {
+    return NextResponse.json(
+      {
+        error:
+          "PhonePe is not configured with valid merchant credentials. Replace the demo placeholders in .env with real PhonePe sandbox keys."
+      },
+      { status: 400 }
+    );
   }
 
   const productIds = items.map((item) => item.productId);
@@ -59,10 +72,12 @@ export async function POST(request: Request) {
   const order = await Order.create({
     orderId,
     customer: session.id,
+    paymentMode,
     paymentStatus: "Pending",
     orderStatus: "Pending",
     shippingStatus: "Not Shipped",
     source: "Web",
+    metricsRecorded: paymentMode === "COD",
     totalAmount,
     shippingAddress: defaultAddress
       ? {
@@ -106,18 +121,64 @@ export async function POST(request: Request) {
     }
   );
 
-  await Customer.updateOne(
-    { _id: session.id },
-    {
-      $inc: {
-        totalOrders: 1,
-        totalSpend: totalAmount
-      },
-      $set: {
-        lastOrderDate: new Date()
+  if (paymentMode === "COD") {
+    await Customer.updateOne(
+      { _id: session.id },
+      {
+        $inc: {
+          totalOrders: 1,
+          totalSpend: totalAmount
+        },
+        $set: {
+          lastOrderDate: new Date()
+        }
       }
+    );
+  }
+
+  if (paymentMode === "PhonePe") {
+    try {
+      const payment = await createPhonePePayment({
+        merchantOrderId: orderId,
+        amountPaisa: Math.round(totalAmount * 100),
+        request
+      });
+
+      await Order.updateOne(
+        { _id: order._id },
+        {
+          paymentGateway: "PhonePe",
+          paymentGatewayOrderId: payment.orderId,
+          paymentGatewayRedirectUrl: payment.redirectUrl,
+          $push: {
+            paymentTimeline: {
+              status: "Pending",
+              date: new Date(),
+              note: "PhonePe payment initiated"
+            }
+          }
+        }
+      );
+
+      return NextResponse.json({
+        ok: true,
+        orderId,
+        paymentMode,
+        paymentState: payment.state,
+        redirectUrl: payment.redirectUrl
+      });
+    } catch (error) {
+      await Promise.all([
+        OrderItem.deleteMany({ order: order._id }),
+        Order.deleteOne({ _id: order._id })
+      ]);
+      console.error("Failed to initiate PhonePe payment", error);
+      return NextResponse.json(
+        { error: "Could not initiate PhonePe payment." },
+        { status: 500 }
+      );
     }
-  );
+  }
 
   try {
     await sendOrderPlacedNotifications({
@@ -138,5 +199,5 @@ export async function POST(request: Request) {
     console.error("Failed to send order notifications", error);
   }
 
-  return NextResponse.json({ ok: true, orderId });
+  return NextResponse.json({ ok: true, orderId, paymentMode });
 }

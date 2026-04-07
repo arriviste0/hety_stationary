@@ -403,12 +403,12 @@ export async function seedAdminData() {
         brandsSectionHeading: "Trusted names across writing, office, and creative supply",
         brandsSectionDescription: "Stationery, copier, art and craft essentials",
         brandsSectionBody:
-          "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials.",
+          "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use.",
         brandsSectionItems: ["HETY", "Camlin", "DOMS", "Officemate"],
         productRangeEyebrow: "Product Range",
-        productRangeHeading: "Stationery, copier, art and craft essentials",
+        productRangeHeading: "Everyday stationery for school, office, and creative work",
         productRangeDescription:
-          "Featured products from our current business mix including HETY branding items, school essentials, office supplies, and creative materials."
+          "Explore a practical mix of HETY-branded products, school supplies, office essentials, and art materials selected for daily use."
       }
     });
   }

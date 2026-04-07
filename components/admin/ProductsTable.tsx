@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import ConfirmButton from "@/components/admin/ConfirmButton";
 import ProductCsvTools from "@/components/admin/ProductCsvTools";
@@ -10,13 +10,15 @@ type ProductsTableProps = {
   categories: string[];
   brands: string[];
   deleteProduct: (id: string) => Promise<void>;
+  deleteProducts: (formData: FormData) => Promise<void>;
 };
 
 export default function ProductsTable({
   products,
   categories,
   brands,
-  deleteProduct
+  deleteProduct,
+  deleteProducts
 }: ProductsTableProps) {
   const [filters, setFilters] = useState({
     query: "",
@@ -27,6 +29,7 @@ export default function ProductsTable({
     minPrice: "",
     maxPrice: ""
   });
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const filtered = useMemo(() => {
     return products.filter((product) => {
@@ -62,6 +65,34 @@ export default function ProductsTable({
       );
     });
   }, [filters, products]);
+
+  const filteredIds = useMemo(
+    () => filtered.map((product) => String(product._id)),
+    [filtered]
+  );
+  const allFilteredSelected =
+    filteredIds.length > 0 &&
+    filteredIds.every((id) => selectedIds.includes(id));
+
+  useEffect(() => {
+    setSelectedIds((prev) => prev.filter((id) => filteredIds.includes(id)));
+  }, [filteredIds]);
+
+  const toggleProductSelection = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      if (allFilteredSelected) {
+        return prev.filter((id) => !filteredIds.includes(id));
+      }
+
+      return Array.from(new Set([...prev, ...filteredIds]));
+    });
+  };
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -154,10 +185,40 @@ export default function ProductsTable({
           className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
         />
       </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/70 px-5 py-3">
+        <label className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
+          <input
+            type="checkbox"
+            checked={allFilteredSelected}
+            onChange={toggleSelectAll}
+            className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+          />
+          Select all visible
+        </label>
+        <form action={deleteProducts} className="flex items-center gap-3">
+          {selectedIds.map((id) => (
+            <input key={id} type="hidden" name="productIds" value={id} />
+          ))}
+          <p className="text-sm text-slate-500">
+            {selectedIds.length} selected
+          </p>
+          <ConfirmButton
+            type="submit"
+            message={`Delete ${selectedIds.length} selected product${selectedIds.length === 1 ? "" : "s"}?`}
+            disabled={selectedIds.length === 0}
+            className="rounded-lg border border-rose-200 px-3 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Delete Selected
+          </ConfirmButton>
+        </form>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-[1080px] w-full text-left text-sm">
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
+              <th className="px-4 py-3">
+                <span className="sr-only">Select</span>
+              </th>
               <th className="px-4 py-3">SKU</th>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Category</th>
@@ -174,6 +235,15 @@ export default function ProductsTable({
           <tbody>
             {filtered.map((product) => (
               <tr key={product._id} className="border-t border-slate-100">
+                <td className="px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(String(product._id))}
+                    onChange={() => toggleProductSelection(String(product._id))}
+                    className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                    aria-label={`Select ${product.name}`}
+                  />
+                </td>
                 <td className="px-4 py-3 font-semibold text-slate-700">
                   {product.sku}
                 </td>
@@ -231,7 +301,7 @@ export default function ProductsTable({
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td className="px-4 py-6 text-center text-sm text-slate-500" colSpan={11}>
+                <td className="px-4 py-6 text-center text-sm text-slate-500" colSpan={12}>
                   No products match the filters.
                 </td>
               </tr>
@@ -240,7 +310,7 @@ export default function ProductsTable({
         </table>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 p-4 text-xs text-slate-500">
-        <p>Bulk actions: Activate / Deactivate / Assign Category</p>
+        <p>Select products to delete them together.</p>
         <p>{filtered.length} products</p>
       </div>
     </div>

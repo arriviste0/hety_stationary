@@ -76,6 +76,7 @@ export async function GET() {
       date: order.date,
       amount: Number(order.totalAmount || 0),
       status: order.orderStatus,
+      paymentMode: order.paymentMode || "COD",
       paymentStatus: order.paymentStatus,
       shippingStatus: order.shippingStatus,
       invoiceNumber: order.invoiceNumber || "",

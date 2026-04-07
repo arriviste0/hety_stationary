@@ -21,7 +21,19 @@ SMTP_PASS=replace-this-password
 SMTP_FROM=notifications@example.com
 SMTP_SECURE=false
 ADMIN_NOTIFICATION_EMAIL=pranshu.arvind.patel@gmail.com
+APP_URL=http://localhost:3000
+PHONEPE_ENV=sandbox
+PHONEPE_CLIENT_ID=your-phonepe-client-id
+PHONEPE_CLIENT_SECRET=your-phonepe-client-secret
+PHONEPE_CLIENT_VERSION=1
 ```
+
+PhonePe notes:
+
+- `PHONEPE_ENV=sandbox` uses PhonePe UAT endpoints
+- `PHONEPE_ENV=production` uses live endpoints
+- `APP_URL` must point to the public base URL used for the PhonePe redirect after payment
+- The checkout flow now supports `COD` and `PhonePe`
 
 ## Seed Demo Admin Data
 
