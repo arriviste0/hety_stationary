@@ -14,9 +14,11 @@ const CustomerSchema = new Schema(
     googleId: { type: String, sparse: true, index: true },
     emailVerified: { type: Boolean, default: false },
     emailVerification: {
-      code: { type: String },
+      codeHash: { type: String },
       expiresAt: { type: Date },
-      sentAt: { type: Date }
+      sentAt: { type: Date },
+      attempts: { type: Number, default: 0 },
+      lastAttemptAt: { type: Date }
     },
     status: { type: String, enum: ["Active", "Inactive"], default: "Active" },
     totalOrders: { type: Number, default: 0 },

@@ -1,14 +1,5 @@
 import mongoose from "mongoose";
 
-const isProduction = process.env.NODE_ENV === "production";
-const MONGODB_URI =
-  process.env.MONGODB_URI ||
-  (!isProduction ? "mongodb://127.0.0.1:27017/hety_stationery_admin" : "");
-
-if (!MONGODB_URI) {
-  throw new Error("Missing MONGODB_URI environment variable.");
-}
-
 type MongooseCache = {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -22,12 +13,17 @@ declare global {
 const cache = globalThis.mongooseCache || { conn: null, promise: null };
 
 export async function connectToDatabase() {
+  const mongodbUri = process.env.MONGODB_URI || "";
+  if (!mongodbUri) {
+    throw new Error("Missing MONGODB_URI environment variable.");
+  }
+
   if (cache.conn) {
     return cache.conn;
   }
 
   if (!cache.promise) {
-    cache.promise = mongoose.connect(MONGODB_URI, {
+    cache.promise = mongoose.connect(mongodbUri, {
       dbName: "hety_stationery_admin"
     });
   }

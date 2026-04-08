@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Customer } from "@/lib/models/customer";
+import { AUTH_COOKIE_OPTIONS } from "@/lib/auth-security";
 import { signCustomerToken } from "@/lib/jwt";
 
 export const dynamic = "force-dynamic";
@@ -98,11 +99,7 @@ export async function GET(request: Request) {
       email: customer.email
     });
 
-    cookies().set("customer_token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/"
-    });
+    cookies().set("customer_token", token, AUTH_COOKIE_OPTIONS);
 
     return NextResponse.redirect(buildRedirect("/account"));
   } catch {

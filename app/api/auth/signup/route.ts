@@ -3,12 +3,28 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Customer } from "@/lib/models/customer";
+import {
+  AUTH_COOKIE_OPTIONS,
+  VERIFICATION_CODE_TTL_MS,
+  consumeRateLimit,
+  getRequestClientKey,
+  hashVerificationCode
+} from "@/lib/auth-security";
 import { sendEmailVerification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    const clientKey = getRequestClientKey(request);
+    const ipLimit = consumeRateLimit(`signup:ip:${clientKey}`, 10, 15 * 60 * 1000);
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many signup attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     await connectToDatabase();
     const body = (await request.json()) as {
       name?: string;
@@ -36,30 +52,59 @@ export async function POST(request: Request) {
       );
     }
 
-    const existing = await Customer.findOne({ email }).lean();
-    if (existing) {
+    const emailLimit = consumeRateLimit(`signup:email:${email}`, 3, 15 * 60 * 1000);
+    if (!emailLimit.allowed) {
       return NextResponse.json(
-        { error: "An account with this email already exists." },
-        { status: 409 }
+        { error: "Too many signup attempts. Please try again later." },
+        { status: 429 }
       );
     }
 
+    const existing = (await Customer.findOne({ email })) as any;
     const code = String(Math.floor(100000 + Math.random() * 900000));
-    const passwordHash = await bcrypt.hash(password, 10);
-    await Customer.create({
-      name,
-      email,
-      phone,
-      passwordHash,
-      authProvider: "password",
-      emailVerified: false,
-      status: "Active",
-      emailVerification: {
-        code,
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-        sentAt: new Date()
+    const codeHash = hashVerificationCode(email, code);
+
+    if (existing?.emailVerified) {
+      cookies().delete("customer_token");
+      return NextResponse.json({
+        ok: true,
+        requiresVerification: true,
+        email
+      });
+    }
+
+    if (existing && !existing.emailVerified) {
+      existing.name = name || existing.name;
+      existing.phone = phone || existing.phone;
+      if (!existing.passwordHash) {
+        existing.passwordHash = await bcrypt.hash(password, 10);
       }
-    });
+      existing.authProvider = "password";
+      existing.emailVerification = {
+        codeHash,
+        expiresAt: new Date(Date.now() + VERIFICATION_CODE_TTL_MS),
+        sentAt: new Date(),
+        attempts: 0
+      };
+      await existing.save();
+    } else {
+      const passwordHash = await bcrypt.hash(password, 10);
+      await Customer.create({
+        name,
+        email,
+        phone,
+        passwordHash,
+        authProvider: "password",
+        emailVerified: false,
+        status: "Active",
+        emailVerification: {
+          codeHash,
+          expiresAt: new Date(Date.now() + VERIFICATION_CODE_TTL_MS),
+          sentAt: new Date(),
+          attempts: 0
+        }
+      });
+    }
 
     await sendEmailVerification({
       customerName: name,
@@ -67,7 +112,10 @@ export async function POST(request: Request) {
       code
     });
 
-    cookies().delete("customer_token");
+    cookies().set("customer_token", "", {
+      ...AUTH_COOKIE_OPTIONS,
+      maxAge: 0
+    });
 
     return NextResponse.json({
       ok: true,

@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { AUTH_COOKIE_OPTIONS } from "@/lib/auth-security";
 import { connectToDatabase } from "@/lib/mongodb";
 import { AdminUser } from "@/lib/models/adminUser";
 import { signAdminToken } from "@/lib/jwt";
@@ -43,11 +44,7 @@ export default function AdminLoginPage({
       email: user.email
     });
 
-    cookies().set("admin_token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/"
-    });
+    cookies().set("admin_token", token, AUTH_COOKIE_OPTIONS);
 
     redirect(searchParams?.next || "/admin");
   }
@@ -62,7 +59,7 @@ export default function AdminLoginPage({
           Sign in to your panel
         </h1>
         <p className="mt-2 text-sm text-slate-500">
-          Demo login: admin@hetystationery.com / admin123
+          Use an authorized administrator email and password.
         </p>
       </div>
       <form action={loginAction} className="space-y-4">
@@ -73,7 +70,6 @@ export default function AdminLoginPage({
           <input
             name="email"
             type="email"
-            defaultValue="admin@hetystationery.com"
             className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm"
           />
         </div>
@@ -84,7 +80,6 @@ export default function AdminLoginPage({
           <input
             name="password"
             type="password"
-            defaultValue="admin123"
             className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm"
           />
         </div>

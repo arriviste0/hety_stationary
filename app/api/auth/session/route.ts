@@ -18,7 +18,7 @@ export async function GET() {
 
   const customer = (await Customer.findById(session.id).lean()) as Record<string, any> | null;
 
-  if (!customer) {
+  if (!customer || customer.status !== "Active") {
     return NextResponse.json({
       isAuthenticated: false,
       customer: null

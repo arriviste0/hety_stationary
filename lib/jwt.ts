@@ -1,11 +1,11 @@
 import type { Role } from "@/lib/rbac";
 
-const isProduction = process.env.NODE_ENV === "production";
-const JWT_SECRET =
-  process.env.JWT_SECRET || (!isProduction ? "hety-admin-dev-secret" : "");
-
-if (!JWT_SECRET) {
-  throw new Error("Missing JWT_SECRET environment variable.");
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET || "";
+  if (!secret) {
+    throw new Error("Missing JWT_SECRET environment variable.");
+  }
+  return secret;
 }
 
 export type AdminTokenPayload = {
@@ -48,7 +48,7 @@ const fromBase64Url = (input: string) => {
 const importKey = async () =>
   crypto.subtle.importKey(
     "raw",
-    encoder.encode(JWT_SECRET),
+    encoder.encode(getJwtSecret()),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign", "verify"]
