@@ -28,6 +28,12 @@ type OrderNotificationInput = {
   items: OrderNotificationItem[];
 };
 
+type EmailVerificationInput = {
+  customerName: string;
+  customerEmail: string;
+  code: string;
+};
+
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -275,6 +281,48 @@ export async function sendOrderPlacedNotifications(input: OrderNotificationInput
   }
 
   await Promise.allSettled(sends);
+
+  return { skipped: false };
+}
+
+export async function sendEmailVerification(input: EmailVerificationInput) {
+  const transporter = getTransport();
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
+
+  if (!transporter || !from) {
+    return { skipped: true };
+  }
+
+  const html = buildEmailShell(
+    "Verify Your Email",
+    "ACCOUNT SECURITY",
+    `Hi ${escapeHtml(input.customerName)}, use the verification code below to activate your HETY STATIONERY account.`,
+    `
+      <div style="margin:0 0 24px; padding:24px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:18px; text-align:center;">
+        <p style="margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:1.4px; color:#64748b;">Verification Code</p>
+        <p style="margin:0; font-size:34px; line-height:1; font-weight:800; letter-spacing:8px; color:#0f172a;">
+          ${escapeHtml(input.code)}
+        </p>
+      </div>
+      <p style="margin:0; font-size:14px; line-height:1.7; color:#475569;">
+        This code expires in 10 minutes. If you did not request this account, you can ignore this email.
+      </p>
+    `
+  );
+
+  await transporter.sendMail({
+    from,
+    to: input.customerEmail,
+    subject: "Verify your HETY STATIONERY account",
+    text: [
+      `Hi ${input.customerName},`,
+      "",
+      `Your verification code is: ${input.code}`,
+      "",
+      "This code expires in 10 minutes."
+    ].join("\n"),
+    html
+  });
 
   return { skipped: false };
 }

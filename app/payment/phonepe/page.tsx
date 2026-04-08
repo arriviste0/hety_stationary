@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 type PaymentStatus =
@@ -18,7 +18,7 @@ type PaymentStatus =
       error?: string;
     };
 
-export default function PhonePePaymentPage() {
+function PhonePePaymentContent() {
   const searchParams = useSearchParams();
   const merchantOrderId = String(searchParams.get("merchantOrderId") || "");
   const [status, setStatus] = useState<PaymentStatus | null>(null);
@@ -104,5 +104,25 @@ export default function PhonePePaymentPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function PhonePePaymentPage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="section-padding mx-auto py-16">
+          <div className="mx-auto max-w-2xl rounded-[2rem] border border-brand-100 bg-white p-8 shadow-soft">
+            <p className="text-xs uppercase tracking-[0.3em] text-accent-pink">PhonePe Payment</p>
+            <h1 className="mt-3 text-3xl font-display text-slate-900">Payment Status</h1>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              Preparing payment details.
+            </p>
+          </div>
+        </section>
+      }
+    >
+      <PhonePePaymentContent />
+    </Suspense>
   );
 }

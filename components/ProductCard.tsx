@@ -7,7 +7,13 @@ import { motion } from "framer-motion";
 import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({
+  product,
+  showWishlistButton = false
+}: {
+  product: Product;
+  showWishlistButton?: boolean;
+}) {
   const { addToCart, toggleWishlist, wishlist } = useCart();
   const isWishlisted = wishlist.includes(product.id);
   const showBrand =
@@ -54,7 +60,7 @@ export default function ProductCard({ product }: { product: Product }) {
         >
           {product.name}
         </Link>
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-stone-200 pt-4">
+        <div className="mt-auto border-t border-stone-200 pt-4">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-400">
               Price
@@ -63,14 +69,31 @@ export default function ProductCard({ product }: { product: Product }) {
               {product.priceLabel ?? `Rs. ${product.price}`}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => addToCart(product)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-brand-200 bg-white text-brand-700 transition-all duration-200 ease-out hover:border-brand-600 hover:bg-brand-600 hover:text-white"
-            aria-label="Add to cart"
-          >
-            <ShoppingBag size={18} />
-          </button>
+          <div className="mt-4 flex items-center justify-between gap-3">
+            {showWishlistButton ? (
+              <button
+                type="button"
+                onClick={() => toggleWishlist(product.id)}
+                className={`inline-flex h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-all duration-200 ease-out ${
+                  isWishlisted
+                    ? "border-accent-pink bg-pink-50 text-accent-pink"
+                    : "border-stone-200 bg-white text-slate-600 hover:border-accent-pink hover:text-accent-pink"
+                }`}
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart size={16} fill={isWishlisted ? "currentColor" : "none"} />
+                <span>{isWishlisted ? "Wishlisted" : "Wishlist"}</span>
+              </button>
+            ) : <div />}
+            <button
+              type="button"
+              onClick={() => addToCart(product)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-brand-200 bg-white text-brand-700 transition-all duration-200 ease-out hover:border-brand-600 hover:bg-brand-600 hover:text-white"
+              aria-label="Add to cart"
+            >
+              <ShoppingBag size={18} />
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>

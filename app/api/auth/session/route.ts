@@ -31,7 +31,10 @@ export async function GET() {
       id: String(customer._id),
       name: customer.name || "",
       email: customer.email || "",
-      phone: customer.phone || ""
+      phone: customer.phone || "",
+      wishlist: Array.isArray(customer.wishlist)
+        ? customer.wishlist.map((item: unknown) => String(item || "")).filter(Boolean)
+        : []
     }
   });
 }

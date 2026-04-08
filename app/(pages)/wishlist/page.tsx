@@ -1,18 +1,47 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
-import { products } from "@/data/products";
+import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 
 export default function WishlistPage() {
   const { wishlist } = useCart();
+  const [items, setItems] = useState<Product[]>([]);
 
-  const items = useMemo(
-    () => products.filter((product) => wishlist.includes(product.id)),
-    [wishlist]
-  );
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadWishlist() {
+      try {
+        const response = await fetch("/api/account/wishlist", { cache: "no-store" });
+        const data = await response.json().catch(() => ({}));
+
+        if (!isMounted) return;
+        if (!response.ok) {
+          setItems([]);
+          return;
+        }
+
+        setItems(Array.isArray(data.products) ? data.products : []);
+      } catch {
+        if (isMounted) {
+          setItems([]);
+        }
+      }
+    }
+
+    if (wishlist.length > 0) {
+      void loadWishlist();
+    } else {
+      setItems([]);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [wishlist]);
 
   return (
     <section className="section-padding mx-auto py-12">
@@ -31,7 +60,7 @@ export default function WishlistPage() {
       {items.length === 0 ? (
         <div className="mt-8 rounded-3xl border border-brand-100 bg-white p-8 text-center">
           <p className="text-sm text-slate-600">
-            Your wishlist is empty. Tap the heart icon to save products.
+            Your wishlist is empty. Tap the heart icon or wishlist button to save products.
           </p>
         </div>
       ) : (

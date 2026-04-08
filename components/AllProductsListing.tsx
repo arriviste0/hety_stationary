@@ -125,7 +125,7 @@ export default function AllProductsListing({
               <p className="text-sm text-slate-500">No products found.</p>
             )}
             {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} showWishlistButton />
             ))}
           </div>
         </div>

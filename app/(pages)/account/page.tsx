@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { products as fallbackProducts, type Product } from "@/data/products";
+import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
 const LAST_VISITED_KEY = "hety_last_visited";
@@ -58,6 +58,7 @@ type ProfilePayload = {
     preferences: Preferences;
     addresses: Address[];
   };
+  wishlistProducts: Product[];
   orders: AccountOrder[];
 };
 
@@ -166,17 +167,14 @@ export default function AccountPage() {
   }, []);
 
   const wishlistItems = useMemo(() => {
-    const orderProducts = (profile?.orders || [])
-      .flatMap((order) => order.items.map((item) => item.product))
-      .filter(Boolean) as Product[];
     const productMap = new Map<string, Product>();
 
-    [...orderProducts, ...fallbackProducts].forEach((product) => {
+    (profile?.wishlistProducts || []).forEach((product) => {
       productMap.set(product.id, product);
     });
 
     return wishlist.map((id) => productMap.get(id)).filter(Boolean) as Product[];
-  }, [profile?.orders, wishlist]);
+  }, [profile?.wishlistProducts, wishlist]);
 
   const pendingOrders = useMemo(
     () =>
@@ -189,6 +187,12 @@ export default function AccountPage() {
   const handleContinueShopping = () => {
     const last = window.localStorage.getItem(LAST_VISITED_KEY);
     router.push(last || "/");
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+    router.refresh();
   };
 
   const persistProfile = async (nextAddresses = addresses, nextPreferences = preferences) => {
@@ -490,6 +494,13 @@ export default function AccountPage() {
           >
             Continue Shopping
           </button>
+          <button
+            type="button"
+            onClick={() => void handleLogout()}
+            className="btn-secondary px-6 py-3 text-sm font-semibold"
+          >
+            Logout
+          </button>
           <p className="self-center text-sm text-slate-500">
             Lifetime spend: ₹{Number(profile.customer.totalSpend || 0).toFixed(2)}
           </p>
@@ -594,11 +605,7 @@ export default function AccountPage() {
             </Link>
             <button
               type="button"
-              onClick={async () => {
-                await logout();
-                router.push("/");
-                router.refresh();
-              }}
+              onClick={() => void handleLogout()}
               className="btn-secondary w-full px-6 py-3 text-sm font-semibold"
             >
               Logout

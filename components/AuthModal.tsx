@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 
@@ -12,29 +13,93 @@ export default function AuthModal() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [needsVerification, setNeedsVerification] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     setError("");
-    setIsSubmitting(true);
+    setMessage("");
 
-    const result =
-      mode === "login"
-        ? await login(email, password)
-        : await signup({ name, email, phone, password });
-
-    setIsSubmitting(false);
-
-    if (!result.ok) {
-      setError(result.error || "Something went wrong.");
+    if (mode === "signup" && password.length < 8) {
+      setError("Password must be at least 8 characters.");
       return;
+    }
+
+    setIsSubmitting(true);
+    if (mode === "login") {
+      const result = await login(email, password);
+      setIsSubmitting(false);
+
+      if (!result.ok) {
+        setError(result.error || "Something went wrong.");
+        return;
+      }
+    } else {
+      const result = await signup({ name, email, phone, password });
+      setIsSubmitting(false);
+
+      if (!result.ok) {
+        setError(result.error || "Something went wrong.");
+        return;
+      }
+
+      if (result.requiresVerification) {
+        setPendingEmail(result.email || email);
+        setNeedsVerification(true);
+        setMessage("Verification code sent to your email.");
+        return;
+      }
     }
 
     setName("");
     setEmail("");
     setPhone("");
     setPassword("");
+  };
+
+  const verifyEmail = async () => {
+    setError("");
+    setMessage("");
+    setIsSubmitting(true);
+    const response = await fetch("/api/auth/verify-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: pendingEmail, code: verificationCode })
+    });
+    const data = await response.json().catch(() => ({}));
+    setIsSubmitting(false);
+
+    if (!response.ok) {
+      setError(data.error || "Could not verify email.");
+      return;
+    }
+
+    setNeedsVerification(false);
+    closeAuth();
+  };
+
+  const resendCode = async () => {
+    setError("");
+    setMessage("");
+    setIsSubmitting(true);
+    const response = await fetch("/api/auth/resend-verification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: pendingEmail })
+    });
+    const data = await response.json().catch(() => ({}));
+    setIsSubmitting(false);
+
+    if (!response.ok) {
+      setError(data.error || "Could not resend verification code.");
+      return;
+    }
+
+    setMessage("A fresh verification code has been sent.");
   };
 
   return (
@@ -77,8 +142,15 @@ export default function AuthModal() {
               to your cart.
             </p>
 
+            <Link
+              href="/api/auth/google/start"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-brand-300 hover:text-brand-700"
+            >
+              Continue with Google
+            </Link>
+
             <div className="mt-5 space-y-4">
-              {mode === "signup" && (
+              {mode === "signup" && !needsVerification && (
                 <input
                   value={name}
                   onChange={(event) => setName(event.target.value)}
@@ -90,9 +162,10 @@ export default function AuthModal() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Email address"
+                readOnly={needsVerification}
                 className="input-base w-full rounded-2xl px-4 py-3 text-sm placeholder:text-slate-400"
               />
-              {mode === "signup" && (
+              {mode === "signup" && !needsVerification && (
                 <input
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
@@ -105,25 +178,51 @@ export default function AuthModal() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Password"
+                readOnly={needsVerification}
                 className="input-base w-full rounded-2xl px-4 py-3 text-sm placeholder:text-slate-400"
               />
+              {needsVerification && (
+                <input
+                  value={verificationCode}
+                  onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, ""))}
+                  placeholder="6-digit verification code"
+                  inputMode="numeric"
+                  maxLength={6}
+                  className="input-base w-full rounded-2xl px-4 py-3 text-sm placeholder:text-slate-400"
+                />
+              )}
               {error && <p className="text-sm text-rose-600">{error}</p>}
+              {message && <p className="text-sm text-emerald-700">{message}</p>}
               <button
                 type="button"
-                onClick={handleSubmit}
+                onClick={needsVerification ? verifyEmail : handleSubmit}
                 className="btn-primary w-full px-6 py-3 text-sm font-semibold"
               >
                 {isSubmitting
                   ? "Please wait..."
-                  : mode === "login"
+                  : needsVerification
+                    ? "Verify Email"
+                    : mode === "login"
                     ? "Sign In"
                     : "Create Account"}
               </button>
+              {needsVerification && (
+                <button
+                  type="button"
+                  onClick={resendCode}
+                  className="btn-secondary w-full px-6 py-3 text-sm font-semibold"
+                >
+                  Resend Code
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => {
                   setMode((current) => (current === "login" ? "signup" : "login"));
                   setError("");
+                  setMessage("");
+                  setNeedsVerification(false);
+                  setVerificationCode("");
                 }}
                 className="btn-secondary w-full px-6 py-3 text-sm font-semibold"
               >

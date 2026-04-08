@@ -32,11 +32,19 @@ export async function POST(request: Request) {
           email: string;
           passwordHash?: string;
           status?: string;
+          emailVerified?: boolean;
         }
       | null;
 
     if (!customer || !customer.passwordHash || customer.status !== "Active") {
       return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
+    }
+
+    if (customer.emailVerified === false) {
+      return NextResponse.json(
+        { error: "Please verify your email before signing in." },
+        { status: 403 }
+      );
     }
 
     const matches = await bcrypt.compare(password, customer.passwordHash);

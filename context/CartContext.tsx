@@ -33,13 +33,25 @@ type CartContextValue = {
     email: string;
     phone?: string;
     password: string;
-  }) => Promise<{ ok: boolean; error?: string }>;
+  }) => Promise<{ ok: boolean; error?: string; requiresVerification?: boolean; email?: string }>;
   logout: () => Promise<void>;
 };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 const CART_KEY = "hety_cart";
 const WISHLIST_KEY = "hety_wishlist";
+
+function normalizeWishlist(input: unknown): string[] {
+  if (!Array.isArray(input)) return [];
+
+  return Array.from(
+    new Set(
+      input
+        .map((item) => String(item || "").trim())
+        .filter(Boolean)
+    )
+  );
+}
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -54,23 +66,58 @@ export function CartProvider({ children }: { children: ReactNode }) {
     phone?: string;
   } | null>(null);
 
+  const persistWishlist = useCallback(async (nextWishlist: string[]) => {
+    const response = await fetch("/api/account/wishlist", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ wishlist: nextWishlist })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || "Could not save wishlist.");
+    }
+
+    return normalizeWishlist(data.wishlist);
+  }, []);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const storedCart = window.localStorage.getItem(CART_KEY);
     const storedWishlist = window.localStorage.getItem(WISHLIST_KEY);
+    const localWishlist = storedWishlist ? normalizeWishlist(JSON.parse(storedWishlist)) : [];
+
     if (storedCart) {
       setItems(JSON.parse(storedCart));
     }
-    if (storedWishlist) {
-      setWishlist(JSON.parse(storedWishlist));
-    }
+    setWishlist(localWishlist);
 
     fetch("/api/auth/session", { cache: "no-store" })
       .then((response) => response.json())
-      .then((data) => {
+      .then(async (data) => {
         if (data?.isAuthenticated && data.customer) {
           setIsLoggedIn(true);
-          setCustomer(data.customer);
+          setCustomer({
+            id: data.customer.id,
+            name: data.customer.name,
+            email: data.customer.email,
+            phone: data.customer.phone
+          });
+
+          const serverWishlist = normalizeWishlist(data.customer.wishlist);
+          const mergedWishlist = normalizeWishlist([...serverWishlist, ...localWishlist]);
+
+          setWishlist(mergedWishlist);
+
+          if (mergedWishlist.join("|") !== serverWishlist.join("|")) {
+            try {
+              const savedWishlist = await persistWishlist(mergedWishlist);
+              setWishlist(savedWishlist);
+            } catch {
+              setWishlist(mergedWishlist);
+            }
+          }
         } else {
           setIsLoggedIn(false);
           setCustomer(null);
@@ -80,7 +127,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setIsLoggedIn(false);
         setCustomer(null);
       });
-  }, []);
+  }, [persistWishlist]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -134,10 +181,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setIsAuthOpen(true);
       return;
     }
-    setWishlist((prev) =>
-      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
-    );
-  }, [isLoggedIn]);
+    setWishlist((prev) => {
+      const nextWishlist = prev.includes(id)
+        ? prev.filter((itemId) => itemId !== id)
+        : [...prev, id];
+
+      void persistWishlist(nextWishlist).catch(() => {
+        setWishlist(prev);
+      });
+
+      return nextWishlist;
+    });
+  }, [isLoggedIn, persistWishlist]);
 
   const cartCount = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
@@ -168,10 +223,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const sessionResponse = await fetch("/api/auth/session", { cache: "no-store" });
     const sessionData = await sessionResponse.json();
     setIsLoggedIn(true);
-    setCustomer(sessionData.customer || null);
+    setCustomer(
+      sessionData.customer
+        ? {
+            id: sessionData.customer.id,
+            name: sessionData.customer.name,
+            email: sessionData.customer.email,
+            phone: sessionData.customer.phone
+          }
+        : null
+    );
+    const mergedWishlist = normalizeWishlist([
+      ...normalizeWishlist(sessionData.customer?.wishlist),
+      ...wishlist
+    ]);
+    setWishlist(mergedWishlist);
+    await persistWishlist(mergedWishlist).catch(() => undefined);
     setIsAuthOpen(false);
     return { ok: true };
-  }, []);
+  }, [persistWishlist, wishlist]);
   const signup = useCallback(async (payload: {
     name: string;
     email: string;
@@ -188,13 +258,36 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return { ok: false, error: data.error || "Signup failed." };
     }
 
+    if (data.requiresVerification) {
+      return {
+        ok: true,
+        requiresVerification: true,
+        email: String(data.email || payload.email || "").trim().toLowerCase()
+      };
+    }
+
     const sessionResponse = await fetch("/api/auth/session", { cache: "no-store" });
     const sessionData = await sessionResponse.json();
     setIsLoggedIn(true);
-    setCustomer(sessionData.customer || null);
+    setCustomer(
+      sessionData.customer
+        ? {
+            id: sessionData.customer.id,
+            name: sessionData.customer.name,
+            email: sessionData.customer.email,
+            phone: sessionData.customer.phone
+          }
+        : null
+    );
+    const mergedWishlist = normalizeWishlist([
+      ...normalizeWishlist(sessionData.customer?.wishlist),
+      ...wishlist
+    ]);
+    setWishlist(mergedWishlist);
+    await persistWishlist(mergedWishlist).catch(() => undefined);
     setIsAuthOpen(false);
     return { ok: true };
-  }, []);
+  }, [persistWishlist, wishlist]);
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     setIsLoggedIn(false);

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Customer } from "@/lib/models/customer";
-import { signCustomerToken } from "@/lib/jwt";
+import { sendEmailVerification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +29,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters." },
+        { status: 400 }
+      );
+    }
+
     const existing = await Customer.findOne({ email }).lean();
     if (existing) {
       return NextResponse.json(
@@ -37,28 +44,36 @@ export async function POST(request: Request) {
       );
     }
 
+    const code = String(Math.floor(100000 + Math.random() * 900000));
     const passwordHash = await bcrypt.hash(password, 10);
-    const customer = await Customer.create({
+    await Customer.create({
       name,
       email,
       phone,
       passwordHash,
-      status: "Active"
+      authProvider: "password",
+      emailVerified: false,
+      status: "Active",
+      emailVerification: {
+        code,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        sentAt: new Date()
+      }
     });
 
-    const token = await signCustomerToken({
-      id: String(customer._id),
-      name: customer.name,
-      email: customer.email
+    await sendEmailVerification({
+      customerName: name,
+      customerEmail: email,
+      code
     });
 
-    cookies().set("customer_token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/"
-    });
+    cookies().delete("customer_token");
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({
+      ok: true,
+      requiresVerification: true,
+      email
+    });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Could not create account.";

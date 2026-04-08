@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { Customer } from "@/lib/models/customer";
 import { Order } from "@/lib/models/order";
 import { OrderItem } from "@/lib/models/orderItem";
+import { Product } from "@/lib/models/product";
 import { getCustomerSession } from "@/lib/customer-auth";
 import { mapProductToStorefrontProduct } from "@/lib/storefront";
 
@@ -34,6 +35,18 @@ export async function GET() {
         .lean()) as Array<Record<string, any>>)
     : [];
   const orderItemsByOrder = new Map<string, Array<Record<string, any>>>();
+  const wishlistIds = Array.isArray(customer.wishlist)
+    ? customer.wishlist.map((item: unknown) => String(item || "")).filter(Boolean)
+    : [];
+  const wishlistProducts = wishlistIds.length
+    ? ((await Product.find({
+        _id: { $in: wishlistIds },
+        "visibility.status": "Active"
+      })
+        .populate("category")
+        .populate("brand")
+        .lean()) as Array<Record<string, any>>)
+    : [];
 
   orderItems.forEach((item) => {
     const key = String(item.order);
@@ -50,6 +63,9 @@ export async function GET() {
       phone: customer.phone || "",
       totalOrders: Number(customer.totalOrders || 0),
       totalSpend: Number(customer.totalSpend || 0),
+      wishlist: Array.isArray(customer.wishlist)
+        ? customer.wishlist.map((item: unknown) => String(item || "")).filter(Boolean)
+        : [],
       preferences: customer.preferences || {
         email: true,
         offers: true,
@@ -70,6 +86,7 @@ export async function GET() {
           }))
         : []
     },
+    wishlistProducts: wishlistProducts.map(mapProductToStorefrontProduct),
     orders: orders.map((order) => ({
       id: String(order._id),
       orderId: order.orderId,

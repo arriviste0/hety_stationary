@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
 export default function CreateAccountView() {
@@ -15,6 +16,10 @@ export default function CreateAccountView() {
     confirmPassword: ""
   });
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [needsVerification, setNeedsVerification] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -28,7 +33,13 @@ export default function CreateAccountView() {
       return;
     }
 
+    if (form.password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
     setError("");
+    setMessage("");
     setIsSubmitting(true);
     const result = await signup({
       name: form.name,
@@ -43,8 +54,62 @@ export default function CreateAccountView() {
       return;
     }
 
+    if (result.requiresVerification) {
+      setPendingEmail(result.email || form.email);
+      setNeedsVerification(true);
+      setMessage("Verification code sent. Check your email to activate the account.");
+      return;
+    }
+
     router.push("/account");
     router.refresh();
+  };
+
+  const verifyEmail = async () => {
+    if (!pendingEmail || !verificationCode) {
+      setError("Enter the verification code sent to your email.");
+      return;
+    }
+
+    setError("");
+    setMessage("");
+    setIsSubmitting(true);
+    const response = await fetch("/api/auth/verify-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: pendingEmail, code: verificationCode })
+    });
+    const data = await response.json().catch(() => ({}));
+    setIsSubmitting(false);
+
+    if (!response.ok) {
+      setError(data.error || "Could not verify email.");
+      return;
+    }
+
+    router.push("/account");
+    router.refresh();
+  };
+
+  const resendCode = async () => {
+    if (!pendingEmail) return;
+    setError("");
+    setMessage("");
+    setIsSubmitting(true);
+    const response = await fetch("/api/auth/resend-verification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: pendingEmail })
+    });
+    const data = await response.json().catch(() => ({}));
+    setIsSubmitting(false);
+
+    if (!response.ok) {
+      setError(data.error || "Could not resend verification code.");
+      return;
+    }
+
+    setMessage("A fresh verification code has been sent.");
   };
 
   return (
@@ -61,6 +126,14 @@ export default function CreateAccountView() {
           wishlist.
         </p>
 
+        <Link
+          href="/api/auth/google/start"
+          className="mt-6 inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-brand-300 hover:text-brand-700"
+        >
+          Continue with Google
+        </Link>
+
+        {!needsVerification ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <input
             type="text"
@@ -100,16 +173,55 @@ export default function CreateAccountView() {
             className="input-base rounded-2xl px-4 py-3 text-sm sm:col-span-2"
           />
         </div>
+        ) : (
+          <div className="mt-6 space-y-4">
+            <input
+              type="email"
+              value={pendingEmail}
+              readOnly
+              className="input-base w-full rounded-2xl px-4 py-3 text-sm text-slate-500"
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="Enter 6-digit verification code"
+              value={verificationCode}
+              onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, ""))}
+              className="input-base w-full rounded-2xl px-4 py-3 text-sm"
+            />
+          </div>
+        )}
 
         {error && <p className="mt-4 text-sm text-rose-600">{error}</p>}
+        {message && <p className="mt-4 text-sm text-emerald-700">{message}</p>}
 
-        <button
-          type="button"
-          onClick={handleSubmit}
-          className="btn-primary mt-6 w-full px-6 py-3 text-sm font-semibold"
-        >
-          {isSubmitting ? "Creating..." : "Create Account"}
-        </button>
+        {!needsVerification ? (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="btn-primary mt-6 w-full px-6 py-3 text-sm font-semibold"
+          >
+            {isSubmitting ? "Creating..." : "Create Account"}
+          </button>
+        ) : (
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={verifyEmail}
+              className="btn-primary flex-1 px-6 py-3 text-sm font-semibold"
+            >
+              {isSubmitting ? "Verifying..." : "Verify Email"}
+            </button>
+            <button
+              type="button"
+              onClick={resendCode}
+              className="btn-secondary flex-1 px-6 py-3 text-sm font-semibold"
+            >
+              Resend Code
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
